@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+<title>L&A- admin</title>    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminassets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminassets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <!-- sidebar -->
+    <%- include('partials/sidebar')%>
+    <!-- sidebar -->
+    <main class="main-wrap">
+         <!-- header -->
+       <%- include('partials/header')%>
+       <!-- header -->
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                        <div>
+                            <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-lg-6"> -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="/admin/edit-product/<%=data._id%>" enctype="multipart/form-data" onsubmit="return confirm('Are you sure you want to update this product?');">                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product title</label>
+                                    <input type="text" placeholder="Type here" value="<%=data.productName%>" name="productName" class="form-control" id="product_name">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="brand_name" class="form-label">Brand title</label>
+                                    <input type="text" placeholder="Type here" value="<%=data.brandName%>" class="form-control" name="brandName" id="brand_name">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Full description</label>
+                                    <input placeholder="Type here" class="form-control" value="<%=data.description%>"  name="description" ></input>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Regular price</label>
+                                            <div class="row gx-2">
+                                                <input placeholder="₹" type="text"value="<%=data.regularPrice%>" name="regularPrice" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Sale price</label>
+                                            <input placeholder="₹" type="text" value="<%=data.salePrice%>" name="salePrice" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class=" mb-4">
+                                        <div class="card-header">
+                                            <h4>Media</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="input-upload">
+                                                <div class="d-flex"> 
+                                                    <% for(var i=0;i<data.image.length;i++){ %>
+                                                        <img src="/adminassets/imgs/products/<%= data.image[i] %>" alt="<%= data.image[1] %>" width="100px" height="150px">
+                                                        <div><a class="btn-sm text  btn-danger" href="/admin/delete-image/<%=data._id%>/<%= data.image[i]%>" onclick="return confirm('This action is going to delete the selected image.')">X</a></div>
+                                                    <% } %>
+                                                </div>
+                                                <input multiple name="image" id="image" class="form-control" type="file">
+                                            </div>
+                                        </div>
+
+                                        <div class=" mb-4">
+                                            <div class="card-header">
+                                                <h4>Organization</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row gx-2">
+                                                    <div class="row-sm-6 mb-3">
+                                                        <label class="form-label">Category</label>
+                                                        <select class="form-select" name="category">
+                                                            <% for (var i = 0; i < category.length; i++) { %>
+                                                                <option value="<%= category[i].name %>" <% if (data.category === category[i].name ) { %> selected <% } %>> <%= category[i].name %></option>
+                                                            <% } %>
+                                                        </select>
+                                                        <label class="form-label">isListed</label>
+                                                        <select class="form-select" name="isListed">
+                                                                <option value="true" <% if (data.isListed) { %> selected <% } %>>true</option>
+                                                                <option value="false" <% if (!data.isListed) { %> selected <% } %>>false</option>
+                                                        </select>
+                                                        
+                                                    </div>
+                                                    
+                                                    <div class="mb-4">
+                                                        <label for="product_name" class="form-label">Quantity</label>
+                                                        <input type="text" class="form-control" value="<%=data.quantity%>" name="quantity">
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label for="product_name" class="form-label"></label>
+                                                        <input type="hidden" class="form-control" value="<%=data.image%>" name="imageImport">
+                                                    </div>
+                                                </div> <!-- row.// -->
+                                            </div>
+                                        </div> 
+                                        <button type="submit" class="btn btn-md rounded font-sm hover-up">Update</button>
+                            </form>
+                        </div>
+                    </div> <!-- card end// -->
+                    <!-- <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Shipping</h4>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Width</label>
+                                            <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Height</label>
+                                            <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Weight</label>
+                                    <input type="text" placeholder="gam" class="form-control" id="product_name">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Shipping fees</label>
+                                    <input type="text" placeholder="$" class="form-control" id="product_name">
+                                </div>
+                            </form>
+                        </div>
+                    </div> card end// -->
+                <!-- </div> -->
+                <div class="col-lg-3">
+                    
+                    </div> 
+                    
+                </div>
+            </div>
+        </section> <!-- content-main end// -->
+         <!-- footer -->
+       <%- include('partials/footer')%>
+       <!-- footer -->
+    </main>
+    <script src="/adminassets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminassets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminassets/js/vendors/select2.min.js"></script>
+    <script src="/adminassets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminassets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminassets/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>

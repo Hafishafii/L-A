@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+<title>L&A- admin</title>    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminassets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminassets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+    <!-- sidebar -->
+    <%- include('partials/sidebar')%>
+    <!-- sidebar -->
+
+    <main class="main-wrap">
+        <!-- header -->
+        <%- include('partials/header')%>
+        <!-- header -->
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Add, edit or delete a category</p>
+                </div>
+                <div>
+                    <a href="/admin/categories-add" class="btn btn-primary btn-sm rounded">Create new</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </th>
+                                            <!-- <th>ID</th> -->
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>isListed</th>
+                                            <th>Image</th>
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for(var i=0;i<categories.length;i++){ %>
+                                            <tr>
+                                              <td><%= i+1 %></td>
+                                              <td><%= categories[i].name %></td>
+                                              <td><%= categories[i].description %></td>
+                                              <td><%= categories[i].isListed %></td>
+                                              <td><img src="/adminassets/imgs/category/<%= categories[i].image %>" width="100px" alt="<%= categories[i].image %>"></td>
+                                        
+                                              <td> <div class="d-flex"><a href="/admin/categories-edit/<%= categories[i]._id%>" class="btn-sm btn-info me-auto">Edit</a> <a type="button" onclick="return confirm('This action is going to delete <%= categories[i].name %> ')" href="/admin/categories-delete/<%= categories[i]._id %>" class="btn-sm btn-danger">Delete</a></div>
+                                            </tr>
+                                            <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+       <!-- footer -->
+       <%- include('partials/footer')%>
+       <!-- footer -->
+    </main>
+    <script src="/adminassets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminassets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminassets/js/vendors/select2.min.js"></script>
+    <script src="/adminassets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminassets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminassets/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>
