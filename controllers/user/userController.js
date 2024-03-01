@@ -9,6 +9,7 @@ dotenv.config({path:".env"});
 
 
 
+
 const securePassword=async(password) => {
     try {
         const passwordHash=await bcrypt.hash(password,10);
@@ -21,11 +22,9 @@ const securePassword=async(password) => {
 
 
 
-
 const generateOtp=()=> {
     return Math.floor(Math.random()*9000+1000);
 }
-
 
 
 
@@ -40,8 +39,6 @@ const sendMail=async (req,res)=> {
               message:"email already registered, try logging in.",
           })
       }
-
-
 
         const otp=generateOtp();
         console.log(otp);
@@ -68,7 +65,7 @@ const sendMail=async (req,res)=> {
 if(info){
   console.log("email has been sent this is otp:"+otp)
   req.session.otp = otp
-  res.render('verifyOtp')
+  res.redirect('/verifyOtp')
 }
     }
     catch(error) {
@@ -78,15 +75,12 @@ if(info){
 };
 
 
-//hafis
 
 
 //  resend OTP
 const resendOTP=async(req,res)=> {
   try {
-    const email=req.session.userData.email;
-
-    console.log('hereeeeeeeeeeeeeeeeeeeeeeeeeeee',email);
+  const email=req.session.userData.email;
 const otp = generateOtp()
 console.log(otp);
 req.session.otp = otp;
@@ -121,11 +115,20 @@ res.json({ success: true, otp:otp  });
 
 
 
+
+
+// ------------------load OTP page------------------
+const loadotpPage= (req,res)=> {
+  res.render('verifyOtp')
+}
+
+
+
+
+
 //................................................................VERIFY OTP.........................
 const verifyotp = async(req,res)=>{
   try {
-    const categories = await Category.find({ isListed: true });
-    const products = await Product.find({ isListed: true });
 const otp = req.body.verify;
 const rotp = req.session.otp;
 console.log(otp+rotp)
@@ -146,16 +149,9 @@ if(rotp == otp){
           const userData = savedUser.name;
           console.log(savedUser);
           res.redirect("/");
-          // res.render("home",{userData,products,categories});
-            // res.render("home",{userData,
-            // });
 }else{
   res.render("verifyOtp", { message: "OTP verification failed" })
-//   res.render("login", {
-//     message:"otp error.",
-// });
-}
-    
+}   
   } catch (error) {
     console.log(error);
   }
@@ -164,10 +160,7 @@ if(rotp == otp){
 
 const loadRegister=async (req,res)=> {
     try {
-        res.render("login", {
-            userData:userData,
-            // categor:categories,
-        })
+        res.render("login")
     }
     catch(error) {
         console.log(error.message);
@@ -183,8 +176,6 @@ const loadRegister=async (req,res)=> {
 const loadLogin=async (req,res)=> {
     try {
       const userData = await User.findById(req.session.user_id);
-    //   const categories = await Category.find();
-  
       res.render("login");
     }
     catch(error) {
@@ -258,28 +249,30 @@ const userLogOut=async (req, res) => {
 
 
 
-const loadHome=async (req, res) => {
-
-    try {
+const loadHome = async (req, res) => {
+  try {
       const categories = await Category.find({ isListed: true });
       const products = await Product.find({ isListed: true });
+
+      let userData = null;
       const user = await User.findById(req.session.user_id);
-      const userData=user?.name;
-    
-      console.log("user",userData);
 
-      console.log(products,categories);
+      if (user && user.isActive) {
+          userData = user.name;
+      } else {
+          req.session.user_id = null;
+      }
+
       res.render("home", {
-        categories: categories,
-        products: products,
-        userData: userData
+          categories: categories,
+          products: products,
+          userData: userData
       });
-    } 
-    catch (error) {
+  } catch (error) {
       console.log(error.message);
-    }
+      res.status(500).send('Internal Server Error');
+  }
 };
-
 
 
 
@@ -297,15 +290,11 @@ const error=async (req,res)=> {
 const productView=async(req,res)=>{
   try {
     const product_id=req.query.productid;
-    console.log(product_id);
     const product=await Product.findById(product_id);
     const categories = await Category.find({ isListed: true });
     const user = await User.findById(req.session.user_id);
     const userData=user?.name;
   
-    console.log("user",userData);
-
-    console.log(product,categories);
     res.render("product", {
       categories: categories,
       product: product,
@@ -321,6 +310,32 @@ const productView=async(req,res)=>{
 
 
 
+//  load user account page
+const loadAccount = async (req, res) => {
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
+
+    res.render("userAccount", {
+      userData: userData,
+      categories: categories,
+
+    });
+};
+
+
+
+
+
+const loadEdit=(req,res)=> {
+  res.render('editAddress')
+}
+
+
+
+
+
+
+
 module.exports = {
     loadRegister,
     loadLogin,
@@ -330,5 +345,8 @@ module.exports = {
     sendMail,
     verifyotp,
     productView,
-    resendOTP
+    resendOTP,
+    loadotpPage,
+    loadAccount,
+    loadEdit
 }

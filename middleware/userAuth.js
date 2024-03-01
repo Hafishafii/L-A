@@ -25,6 +25,7 @@ const isLogIn = async(req,res,next)=>{
 const isLogOut = async(req,res,next)=>{
     try {
         if(req.session.user_id){
+            console.log(req.session.user_id);
             res.redirect('/')
         }
         else {

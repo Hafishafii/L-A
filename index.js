@@ -13,7 +13,7 @@ const session =require('express-session')
 
 const app=express()
 
-app.use(logger('dev'))
+// app.use(logger('dev'))
 
 app.use(nocache())
 

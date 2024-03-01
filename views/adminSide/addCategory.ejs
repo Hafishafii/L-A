@@ -38,36 +38,54 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                            <form method="post" action="/admin/categories" enctype="multipart/form-data" >
-                                <div class="mb-4">
-                                    <label for="category_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" name="name" class="form-control" id="caregory_name" />
-                                </div>
-                                <div class="mb-4">
-
-                                    <label for="isListed" class="form-label">image</label>
-                                    <input type="file" placeholder="" name="image" class="form-control" id="image" />
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">isListed</label>
-                                    <select class="form-select" name="isListed">
-                                        <option value="true">Yes</option>
-                                          <option value="false">No</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Description</label>
-                                    <input placeholder="Type here" class="form-control" name="description"></input>
-                                </div>
-                                <div><% if (typeof message !== 'undefined') {
-                          
-                                    %>
-                                    <p style="color: green;"><%= message %><p>
-                                  <% } %></div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">Create category</button>
-                                </div>
-                            </form>
+                        <form method="post" action="/admin/categories" enctype="multipart/form-data" onsubmit="return validateForm()">
+                            <div class="mb-4">
+                                <label for="category_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" name="name" class="form-control" id="category_name" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="image" class="form-label">Image</label>
+                                <input type="file" placeholder="" name="image" accept="image/*" class="form-control" id="image" />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">isListed</label>
+                                <select class="form-select" name="isListed">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <input placeholder="Type here" class="form-control" name="description"></input>
+                            </div>
+                            <div>
+                                <% if (typeof message !== 'undefined') { %>
+                                <p style="color: green;"><%= message %><p>
+                                <% } %>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create category</button>
+                            </div>
+                        </form>
+                        
+                        
+                        <script>
+                            function validateForm() {
+                                const imageInput = document.getElementById("image");
+                                const imageFile = imageInput.files[0];
+                                if (!imageFile) {
+                                    alert("Please select an image.");
+                                    return false; // Prevent form submission
+                                }
+                                const fileType = imageFile.type;
+                                if (!fileType.startsWith("image/")) {
+                                    alert("Please select an image file.");
+                                    return false; // Prevent form submission
+                                }
+                                return true; // Proceed with form submission
+                            }
+                        </script>                        
+                        
                         </div>
                        
                     </div> <!-- .row // -->

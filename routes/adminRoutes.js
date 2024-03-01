@@ -9,40 +9,17 @@ const flash=require('express-flash');
 
 
 
-admin_route.use(express.json());
-admin_route.use(express.urlencoded({extended: true}));
-
-
 
 // flash
 admin_route.use(flash());
 
 
 
-
-//session
-
-admin_route.use(session({
-    secret: config.sessionSecret,
-    resave: false, 
-    saveUninitialized: false, 
-  }));
-
-
-
-
-
-
-
 // paths
-
-admin_route.set('view engine','ejs');
 admin_route.set('views','./views/adminSide')
 
 
-const bodyParser=require('body-parser');
-admin_route.use(bodyParser.json());   
-admin_route.use(bodyParser.urlencoded({extended:true}));
+
 
 const adminController=require("../controllers/admin/adminController")
 const userManagementController=require('../controllers/admin/userManagementController')

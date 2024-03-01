@@ -1,7 +1,7 @@
 const Product=require('../../model/productModel')
 const Category=require('../../model/categoryModel')
-
-
+const fs = require('fs');
+const path = require('path');
 
 
 // load add product
@@ -99,6 +99,11 @@ const editProduct = async (req, res) => {
         const imgArr = [...imgImp, ...fileNamesU];
         console.log(imgArr);
 
+        const quantity = parseInt(req.body.quantity); 
+        if (isNaN(quantity) || quantity < 0) {
+            throw new Error("Quantity must be a non-negative number.");
+        }
+
         const data = req.files.length ? {
             _id: id,
             productName: req.body.productName,
@@ -107,7 +112,7 @@ const editProduct = async (req, res) => {
             description: req.body.description,
             regularPrice: req.body.regularPrice,
             salePrice: req.body.salePrice,
-            quantity: req.body.quantity,
+            quantity: quantity, 
             isListed: req.body.isListed,
             image: imgArr
         } : {
@@ -119,7 +124,7 @@ const editProduct = async (req, res) => {
             regularPrice: req.body.regularPrice,
             salePrice: req.body.salePrice,
             isListed: req.body.isListed,
-            quantity: req.body.quantity
+            quantity: quantity 
         };
         console.log(data);
         await Product.findByIdAndUpdate(id, data);
@@ -129,6 +134,7 @@ const editProduct = async (req, res) => {
         console.log(error.message);
     }
 };
+
 
 
 
@@ -159,26 +165,36 @@ const deleteProduct=async (req,res)=> {
 
 
 // delete product image
-const deleteImage=async (req,res)=> {
-    const id=req.params.id;
-    const img=req.params.img;
+const deleteImage = async (req, res) => {
+    const id = req.params.id;
+    const img = req.params.img;
 
     try {
-        const updatedDocument=await Product.findOneAndUpdate(
-            {_id:id},
-            {$pull:{image:img}},
-            {new:true}
+        const updatedDocument = await Product.findOneAndUpdate(
+            { _id: id },
+            { $pull: { image: img } },
+            { new: true }
         );
-        if(!updatedDocument) {
+
+        if (!updatedDocument) {
             console.log('Document not found');
-            return res.status(404).json({message:'Document not found'});
+            return res.status(404).json({ message: 'Document not found' });
         }
-        console.log('Element removed successfully');
-        res.redirect('/admin/edit-product/'+id)
-    }
-    catch(error) {
+
+        const imagePath = path.join(__dirname, '../public/admin-assets/imgs/products', img);
+
+        // Delete the image file from the file system
+        fs.unlink(imagePath, (err) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ message: 'An error occurred while deleting the image' });
+            }
+            console.log('Image deleted successfully');
+            res.redirect('/admin/edit-product/' + id);
+        });
+    } catch (error) {
         console.log(error);
-        res.status(500).json({message:'An error occured while deleting the element'});
+        res.status(500).json({ message: 'An error occurred while deleting the element' });
     }
 };
 
