@@ -142,63 +142,90 @@
 								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
 								    </div><!-- .End .tab-pane -->
 
-								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								    	<p>The following addresses will be used on the checkout page by default.</p>
-
-								    	<div class="row">
-								    		<div class="col-lg-6">
-								    			<div class="card card-dashboard">
-								    				<div class="card-body">
-								    					<h3 class="card-title">Address</h3><!-- End .card-title -->
-
-														<p>User Name<br>
-														User Company<br>
-														John str<br>
-														New York, NY 10001<br>
-														1-234-987-6543<br>
-														yourmail@mail.com<br>
-														<a href="/edit-address">Edit <i class="icon-edit"></i></a></p>
-								    				</div><!-- End .card-body -->
-								    			</div><!-- End .card-dashboard -->
-								    		</div><!-- End .col-lg-6 -->
-								    	</div><!-- End .row -->
-								    </div><!-- .End .tab-pane -->
-
+									<div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+										<% if (userData.address && userData.address.length > 0) { %>
+											<p>The following addresses will be used on the checkout page by default.</p>
+											<% userData.address.forEach(function(address,i) { %>
+												<div class="row">
+													<div class="col-lg-6">
+														<div class="card card-dashboard">
+															<div class="card-body">
+																<h3 class="card-title">Address</h3><!-- End .card-title -->
+																<p>
+																	<%= address.name %><br>
+																	<%= address.addressLine1 %><br>
+																	<%= address.addressLine2 %><br>
+																	<%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
+																	<%= address.phone %><br>
+																	<!-- <%= address.email %><br> -->
+																	<a href="/edit-address/<%= i %>">Edit <i class="icon-edit"></i></a>
+																	<button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger">Delete</button>
+																</p>
+															</div><!-- End .card-body -->
+														</div><!-- End .card-dashboard -->
+													</div><!-- End .col-lg-6 -->
+												</div><!-- End .row -->
+											<% }); %>
+										<% } else { %>
+											<p>No addresses added. Please add your addresses.</p>
+										<% } %>
+									
+										<a href="/add-address" class="btn btn-primary">Add Address</a>
+									</div><!-- .End .tab-pane -->
+									
+									<script>
+										function deleteAddress(addressId) {
+											fetch('/delete-address', {
+												method: 'DELETE',
+												headers: {
+													'Content-Type': 'application/json',
+												},
+												body: JSON.stringify({ id: addressId }),
+											})
+											.then(response => {
+												if (response.ok) {
+													console.log("Address deleted successfully");
+												} else {
+													console.error("Failed to delete address");
+												}
+											})
+											.catch(error => {
+												console.error("Error:", error);
+											});
+										}
+									</script>
+									
+									
+									
+									
 								    <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
                                         <form action="#">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <label>First Name *</label>
-                                                    <input type="text" class="form-control" id="first-name" required>
-                                                </div><!-- End .col-sm-6 -->
-                                    
-                                                <div class="col-sm-6">
-                                                    <label>Last Name *</label>
-                                                    <input type="text" class="form-control" id="last-name" required>
-                                                </div><!-- End .col-sm-6 -->
-                                            </div><!-- End .row -->
-                                    
-                                            <label>Display Name *</label>
-                                            <input type="text" class="form-control" id="display-name" required>
-                                            <small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
-                                    
-                                            <label>Email address *</label>
-                                            <input type="email" class="form-control" id="email" required>
-                                    
-                                            <label>Current password (leave blank to leave unchanged)</label>
-                                            <input type="password" class="form-control" id="current-password">
-                                    
-                                            <label>New password (leave blank to leave unchanged)</label>
-                                            <input type="password" class="form-control" id="new-password">
-                                    
-                                            <label>Confirm new password</label>
-                                            <input type="password" class="form-control mb-2" id="confirm-new-password">
-                                    
-                                            <button type="submit" class="btn btn-outline-primary-2">
-                                                <span>SAVE CHANGES</span>
-                                                <i class="icon-long-arrow-right"></i>
-                                            </button>
-                                        </form>
+											<div class="row">
+												<div class="col-sm-6">
+													<label>Name *</label>
+													<input type="text" class="form-control" id="name" value="<%= userData.name %>" required>
+												</div><!-- End .col-sm-6 -->
+											</div><!-- End .row -->
+										
+											<label>Email address *</label>
+											<input type="email" class="form-control" id="email" value="<%= userData.email %>" required>
+										
+											<!-- Optional: Password Fields -->
+											<label>Current password (leave blank to leave unchanged)</label>
+											<input type="password" class="form-control" id="current-password" >
+										
+											<label>New password (leave blank to leave unchanged)</label>
+											<input type="password" class="form-control" id="new-password">
+										
+											<label>Confirm new password</label>
+											<input type="password" class="form-control mb-2" id="confirm-new-password">
+										
+											<button type="submit" class="btn btn-outline-primary-2">
+												<span>SAVE CHANGES</span>
+												<i class="icon-long-arrow-right"></i>
+											</button>
+										</form>
+										
                                     </div><!-- .End .tab-pane -->                                    
 								</div>
 	                		</div><!-- End .col-lg-9 -->

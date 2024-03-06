@@ -183,7 +183,6 @@ const deleteImage = async (req, res) => {
 
         const imagePath = path.join(__dirname, '../public/admin-assets/imgs/products', img);
 
-        // Delete the image file from the file system
         fs.unlink(imagePath, (err) => {
             if (err) {
                 console.log(err);

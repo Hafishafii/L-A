@@ -298,7 +298,8 @@ const productView=async(req,res)=>{
     res.render("product", {
       categories: categories,
       product: product,
-      userData: userData
+      userData: userData,
+      productId :product_id
     });
     
   } catch (error) {
@@ -325,14 +326,204 @@ const loadAccount = async (req, res) => {
 
 
 
+const loadAddAddress = async (req, res) => {
+  try {
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
 
-const loadEdit=(req,res)=> {
-  res.render('editAddress')
-}
+    res.render("addAddress", {
+      userData: userData,
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+
+// adding address
+const addAddress = async (req, res) => {
+  try {
+    const address = {
+      name: req.body.name,
+      addressLine1: req.body.addressLine1,
+      addressLine2: req.body.addressLine2,
+      city: req.body.city,
+      state: req.body.state,
+      pinCode: req.body.pinCode,
+      phone: req.body.phone,
+      email: req.body.email,
+      addressType: req.body.addressType,
+    };
+
+    console.log(address);
+    const user = await User.findById(req.session.user_id);
+
+    user.address.push(address);
+    await user.save();
+
+    if (req.session.returnTo1) {
+      res.redirect(req.session.returnTo1);
+    } else {
+      res.redirect("/account");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 
 
 
+// load edit address
+const loadEditAddress = async (req, res) => {
+  try {
+    const addressIndex = req.params.id;
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
+
+    const user = await User.findById(req.session.user_id);
+    if (!user || !user.address || addressIndex < 0 || addressIndex >= user.address.length) {
+      throw new Error('Address not found or invalid address index');
+    }
+
+    const address = user.address[addressIndex];
+    console.log("Addresssssss:", address);
+
+    res.render("editAddress", {
+      address: address,
+      addressIndex: addressIndex,
+      userData: userData,
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
+
+// edit address
+const editAddress = async (req, res) => {
+  try {
+    console.log(req.body,"Bodyyyyyyyyyyyyyyyyyyyyyyyyy");
+    const user = await User.findById(req.session.user_id);
+    const addressId = req.params.addressid;
+    console.log(addressId,"idsdsdsdsdsdsdsdsdshrgfdeg");
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: user._id,
+        "address._id": addressId,
+      },
+      {
+        $set: {
+          "address.$.name": req.body.name,
+          "address.$.addressLine1": req.body.addressLine1,
+          "address.$.addressLine2": req.body.addressLine2,
+          "address.$.city": req.body.city,
+          "address.$.state": req.body.state,
+          "address.$.pinCode": req.body.pinCode,
+          "address.$.phone": req.body.phone,
+          "address.$.email": req.body.email,
+          "address.$.addressType": req.body.addressType,
+        },
+      },
+      { new: true }
+    );
+
+    if (updatedUser) {
+      console.log("User address updated:", updatedUser);
+      res.redirect("/account");
+    } else {
+      console.log("Address not found or user not found.");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+
+
+
+// delete address
+const deleteAddress = async (req, res) => {
+  try {
+    console.log('deleteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+    const userId = req.session.user_id;
+    const addressId = req.params.addressId;
+
+    const user = await User.findById(userId);
+
+    const addressIndex = user.address.findIndex(address => address._id.toString() === addressId);
+
+    if (addressIndex !== -1) {
+      user.address.splice(addressIndex, 1);
+      await user.save();
+      res.status(200).json({ message: 'Address deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Address not found' });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+
+const searchResult = async (req, res) => {
+  try {
+    console.log(req.body);
+    const userData = await User.findById(req.session.user_id);
+    const categories = await Category.find();
+
+    const search = req.body.search;
+
+    var page = 1;
+    if (req.query.page) {
+      page = req.query.page;
+    }
+    const limit = 3;
+
+    const result = await Product.find({
+      $or: [
+        { productName: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ],
+    })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Product.find({
+      $or: [
+        { productName: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ],
+    }).countDocuments();
+    console.log(count);
+    console.log(Math.ceil(count / limit));
+    console.log(page);
+
+    console.log(result);
+    res.render("categoryFind", {
+      products: result,
+      userData: userData,
+      totalPages: Math.ceil(count / limit),
+      page: page,
+      categories: categories,
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 
 
@@ -348,5 +539,10 @@ module.exports = {
     resendOTP,
     loadotpPage,
     loadAccount,
-    loadEdit
+    addAddress,
+    loadAddAddress,
+    loadEditAddress,
+    editAddress,
+    deleteAddress,
+    searchResult
 }

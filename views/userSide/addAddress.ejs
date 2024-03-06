@@ -69,39 +69,39 @@
             <div class="page-content ">
             	<!-- Edit Address Form -->
                     <div class="w-50 m-5 p-5 add-edit-address-form">
-                        <h2 class="form-title">Edit Address</h2>
-                        <form action="/edit-address/<%= address._id %>" method="post" class="address-form">
+                        <h2 class="form-title">Add Address</h2>
+                        <form action="/add-address" method="post" class="address-form">
                             <div class="form-group">
                                 <label for="name">Name *</label>
-                                <input type="text" id="name" name="name" value="<%= address.name %>" class="form-control" required>
+                                <input type="text" id="name" name="name" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="addressLine1">Address Line 1 *</label>
-                                <input type="text" id="addressLine1" name="addressLine1" value="<%= address.addressLine1 %>" class="form-control" required>
+                                <input type="text" id="addressLine1" name="addressLine1" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="addressLine2">Address Line 2</label>
-                                <input type="text" id="addressLine2" name="addressLine2" value="<%= address.addressLine2 %>" class="form-control">
+                                <input type="text" id="addressLine2" name="addressLine2" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="city">City *</label>
-                                <input type="text" id="city" name="city" value="<%= address.city %>" class="form-control" required>
+                                <input type="text" id="city" name="city" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="state">State *</label>
-                                <input type="text" id="state" name="state" value="<%= address.state %>" class="form-control" required>
+                                <input type="text" id="state" name="state" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="pinCode">Pin Code *</label>
-                                <input type="text" id="pinCode" name="pinCode" value="<%= address.pinCode %>" class="form-control" required>
+                                <input type="text" id="pinCode" name="pinCode" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone *</label>
-                                <input type="text" id="phone" name="phone" value="<%= address.phone %>" class="form-control" required>
+                                <input type="text" id="phone" name="phone" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email *</label>
-                                <input type="email" id="email" name="email" value="<%= address.email %>" class="form-control" required>
+                                <input type="email" id="email" name="email" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="addressType">Address Type *</label>

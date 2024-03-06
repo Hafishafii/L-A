@@ -154,7 +154,7 @@
         <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
           <div class="container-fluid d-flex align-items-center">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item"><a href="#">Products</a></li>
               <li class="breadcrumb-item active" aria-current="page">
                 Fullwidth
@@ -267,10 +267,15 @@
                         <!-- End .details-filter-row -->
 
                         <div class="product-details-action">
-                          <a href="#" class="btn-product btn-cart"
-                            ><span>add to cart</span></a
-                          >
-
+                          <form action="/add-to-cart" method="post">
+                              <input type="hidden" name="productId" value="<%= product._id %>">
+                              <input type="number" name="quantity" value="1" min="1" max="10" step="1">
+                              <button type="submit" class="btn-product btn-cart">
+                                  <span>add to cart</span>
+                              </button>
+                          </form>
+                      </div>
+                      
                           <div class="details-action-wrapper">
                             <a
                               href="#"
