@@ -41,7 +41,59 @@
                             <h4>Basic</h4>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="/admin/edit-product/<%=data._id%>" enctype="multipart/form-data" onsubmit="return confirm('Are you sure you want to update this product?');">                                <div class="mb-4">
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                            <script>
+                                function showCustomAlert() {
+                                    Swal.fire({
+                                        title: 'Are you sure?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Yes, update it!'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            document.getElementById("myForm").submit();
+                                        }
+                                    });
+                                    return false;
+                                }
+                        
+                                function validateImage(input) {
+                                    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+                                    const maxSize = 5242880; // 5MB in bytes
+                        
+                                    const files = input.files;
+                                    const errorMessage = document.getElementById('imageError');
+                        
+                                    if (files.length === 0) {
+                                        errorMessage.style.display = 'none';
+                                        return true;
+                                    }
+                        
+                                    const file = files[0];
+                        
+                                    if (!allowedExtensions.exec(file.name)) {
+                                        errorMessage.style.display = 'block';
+                                        return false;
+                                    }
+                        
+                                    if (file.size > maxSize) {
+                                        errorMessage.style.display = 'block';
+                                        return false;
+                                    }
+                        
+                                    errorMessage.style.display = 'none';
+                                    return true;
+                                }
+                        
+                                function validateForm() {
+                                    const input = document.getElementById('image');
+                                    return validateImage(input);
+                                }
+                            </script>
+                            <form id="myForm" method="post" action="/admin/edit-product/<%=data._id%>" enctype="multipart/form-data" onsubmit="return showCustomAlert();">                             
+                                <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
                                     <input type="text" placeholder="Type here" value="<%=data.productName%>" name="productName" class="form-control" id="product_name">
                                 </div>
@@ -80,43 +132,43 @@
                                                         <div><a class="btn-sm text  btn-danger" href="/admin/delete-image/<%=data._id%>/<%= data.image[i]%>" onclick="return confirm('This action is going to delete the selected image.')">X</a></div>
                                                     <% } %>
                                                 </div>
-                                                <input multiple name="image" id="image" class="form-control" type="file">
+                                                <input multiple name="image" id="image" class="form-control" type="file" onchange="validateForm()">
+                                                <div id="imageError" style="display:none; color:red;">Please upload a valid image file (jpg, jpeg, png, gif) with a maximum size of 5MB.</div>
                                             </div>
                                         </div>
-
-                                        <div class=" mb-4">
-                                            <div class="card-header">
-                                                <h4>Organization</h4>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row gx-2">
-                                                    <div class="row-sm-6 mb-3">
-                                                        <label class="form-label">Category</label>
-                                                        <select class="form-select" name="category">
-                                                            <% for (var i = 0; i < category.length; i++) { %>
-                                                                <option value="<%= category[i].name %>" <% if (data.category === category[i].name ) { %> selected <% } %>> <%= category[i].name %></option>
-                                                            <% } %>
-                                                        </select>
-                                                        <label class="form-label">isListed</label>
-                                                        <select class="form-select" name="isListed">
-                                                                <option value="true" <% if (data.isListed) { %> selected <% } %>>true</option>
-                                                                <option value="false" <% if (!data.isListed) { %> selected <% } %>>false</option>
-                                                        </select>
-                                                        
-                                                    </div>
-                                                    
-                                                    <div class="mb-4">
-                                                        <label for="product_name" class="form-label">Quantity</label>
-                                                        <input type="text" class="form-control" value="<%=data.quantity%>" name="quantity">
-                                                    </div>
-                                                    <div class="mb-4">
-                                                        <label for="product_name" class="form-label"></label>
-                                                        <input type="hidden" class="form-control" value="<%=data.image%>" name="imageImport">
-                                                    </div>
-                                                </div> <!-- row.// -->
-                                            </div>
-                                        </div> 
-                                        <button type="submit" class="btn btn-md rounded font-sm hover-up">Update</button>
+                                    </div>
+                                    <div class=" mb-4">
+                                        <div class="card-header">
+                                            <h4>Organization</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row gx-2">
+                                                <div class="row-sm-6 mb-3">
+                                                    <label class="form-label">Category</label>
+                                                    <select class="form-select" name="category">
+                                                        <% for (var i = 0; i < category.length; i++) { %>
+                                                            <option value="<%= category[i].name %>" <% if (data.category === category[i].name ) { %> selected <% } %>> <%= category[i].name %></option>
+                                                        <% } %>
+                                                    </select>
+                                                    <label class="form-label">isListed</label>
+                                                    <select class="form-select" name="isListed">
+                                                            <option value="true" <% if (data.isListed) { %> selected <% } %>>true</option>
+                                                            <option value="false" <% if (!data.isListed) { %> selected <% } %>>false</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="mb-4">
+                                                    <label for="product_name" class="form-label">Quantity</label>
+                                                    <input type="text" class="form-control" value="<%=data.quantity%>" name="quantity">
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label for="product_name" class="form-label"></label>
+                                                    <input type="hidden" class="form-control" value="<%=data.image%>" name="imageImport">
+                                                </div>
+                                            </div> <!-- row.// -->
+                                        </div>
+                                    </div> 
+                                    <button type="submit" class="btn btn-md rounded font-sm hover-up">Update
                             </form>
                         </div>
                     </div> <!-- card end// -->

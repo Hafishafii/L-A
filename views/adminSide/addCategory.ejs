@@ -58,9 +58,10 @@
                                 <label class="form-label">Description</label>
                                 <input placeholder="Type here" class="form-control" name="description"></input>
                             </div>
+                            
                             <div>
                                 <% if (typeof message !== 'undefined') { %>
-                                <p style="color: green;"><%= message %><p>
+                                <p style="color: rgb(116, 0, 0);"><%= message %><p>
                                 <% } %>
                             </div>
                             <div class="d-grid">
@@ -75,14 +76,14 @@
                                 const imageFile = imageInput.files[0];
                                 if (!imageFile) {
                                     alert("Please select an image.");
-                                    return false; // Prevent form submission
+                                    return false; 
                                 }
                                 const fileType = imageFile.type;
                                 if (!fileType.startsWith("image/")) {
                                     alert("Please select an image file.");
-                                    return false; // Prevent form submission
+                                    return false; 
                                 }
-                                return true; // Proceed with form submission
+                                return true;
                             }
                         </script>                        
                         

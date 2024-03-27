@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Orders</h1>
+    <% if (orders.length > 0) { %>
+        <!-- If there are orders, display them -->
+        <ul>
+            <% orders.forEach(order => { %>
+                <li>
+                    <p><strong>Order ID:</strong> <%= order._id %></p>
+                    <p><strong>Total Amount:</strong> <%= order.totalAmount %></p>
+                    <p><strong>Payment Method:</strong> <%= order.paymentDetails %></p>
+                    <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                    <p><strong>Shipping Method:</strong> <%= order.shippingMethod %></p>
+                    <p><strong>Total Items:</strong> <%= order.totalItems %></p>
+                    <p><strong>Order Status:</strong> <%= order.orderStatus %></p>
+                    <!-- Add more order details as needed -->
+                    <p><strong>Created At:</strong> <%= order.createdAt %></p>
+                    <p><strong>Updated At:</strong> <%= order.updatedAt %></p>
+                    <% if (order.deliveredOn) { %>
+                        <p><strong>Delivered On:</strong> <%= order.deliveredOn %></p>
+                    <% } %>
+                    <!-- Button for cancelling the order -->
+                    <form action="/cancel-order" method="POST">
+                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                        <button type="submit">Cancel Order</button>
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <!-- If there are no orders, display a message -->
+        <p>No orders found.</p>
+    <% } %>
+</body>
+</html>

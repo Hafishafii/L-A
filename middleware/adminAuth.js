@@ -29,7 +29,16 @@ const isLogout=async(req,res,next)=> {
 }
 
 
+
+const errorHandler = (err, req, res, next) => {
+    console.error(err.stack);
+    res.render('errorPage')
+};
+
+
+
 module.exports={
     isLogin,
-    isLogout
+    isLogout,
+    errorHandler
 }

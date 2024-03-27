@@ -1,64 +1,94 @@
-const Product=require('../../model/productModel')
-const Category=require('../../model/categoryModel')
-const fs = require('fs');
-const path = require('path');
+const Product = require("../../model/productModel");
+const Category = require("../../model/categoryModel");
+const fs = require("fs");
+const path = require("path");
+
+
+
 
 
 // load add product
-const loadAddProduct=async(req,res)=> {
-    try {
-        const category=await Category.find();
-        res.render('addProduct',{category:category})
-    }
-    catch(error) {
-        console.log(error.message);
-    }
-}
+const loadAddProduct = async (req, res) => {
+  try {
+    const category = await Category.find();
+    res.render("addProduct", { category: category });
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
+};
 
 
 
 
 
 // load products
-const loadProducts=async (req,res)=> {
-    try {
-        const products=await Product.find().lean();
-        console.log(products);
-        res.render('products',{products:products})
-    }
-    catch(error) {
-        console.log(error.message);
-    }
-}
+const loadProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1; 
+  const pageSize = 5;
+  const skip = (page - 1) * pageSize; 
+
+  try {
+    const products = await Product.find().skip(skip).limit(pageSize).lean();
+    
+    const categories = await Category.find();
+
+    const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / pageSize);
+
+    res.render("products", { 
+      products: products, 
+      categories: categories, 
+      currentPage: page, 
+      totalPages: totalPages 
+    });
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
+};
+
 
 
 
 
 
 // add product
-const addProduct=async (req,res)=> {
-    try {
-        console.log(req.body);
-        const fileNames=req.files.map(file => file.filename);
-        console.log(fileNames);
-        const product=new Product({
-            productName:req.body.productName,
-            brandName:req.body.brandName,
-            category:req.body.category,
-            description:req.body.description,
-            regularPrice:req.body.regularPrice,
-            salePrice:req.body.salePrice,
-            quantity:req.body.quantity,
-            image:fileNames
-        })
-        console.log(product);
-       const newProduct=await product.save();
-        res.redirect('/admin/products')
+const addProduct = async (req, res) => {
+  try {
+    console.log(req.body);
+    const fileNames = req.files.map((file) => file.filename);
+    console.log(fileNames);
+
+    const category = await Category.findOne({ name: req.body.category });
+
+    if (!category) {
+      console.error("Category not found");
+      return res.status(404).send("Category not found");
     }
-    catch(error) {
-        console.log(error.message);
-    }
-}
+
+    const { productName, brandName, description, regularPrice, salePrice, quantity } = req.body;
+
+    const product = new Product({
+        productName,
+        brandName,
+        category: category._id,
+        description,
+        regularPrice,
+        salePrice,
+        quantity,
+        image: fileNames,
+    });
+
+
+    console.log(product);
+    const newProduct = await product.save();
+    res.redirect("/admin/products");
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
+};
 
 
 
@@ -66,73 +96,19 @@ const addProduct=async (req,res)=> {
 
 
 // load edit product
-const loadEditProduct=async (req,res)=> {
-    try {
-        const id=req.params.id;
-        const category=await Category.find();
-        Product.findById(id).then((data)=> {
-            console.log(id);
-            console.log(data);
-            res.render('editProduct',{data:data,category:category});
-        })
-    }
-    catch(error) {
-        console.log(error.message);
-    }
-}
-
-
-
-
-
-
-// edit product
-const editProduct = async (req, res) => {
-    try {
-        console.log(req.body);
-        const id = req.params.id;
-        console.log('object id');
-        console.log(id);
-        const fileNamesU = req.files.map(file => file.filename);
-        console.log(fileNamesU);
-        const imgImp = req.body.imageImport.split(',');
-        const imgArr = [...imgImp, ...fileNamesU];
-        console.log(imgArr);
-
-        const quantity = parseInt(req.body.quantity); 
-        if (isNaN(quantity) || quantity < 0) {
-            throw new Error("Quantity must be a non-negative number.");
-        }
-
-        const data = req.files.length ? {
-            _id: id,
-            productName: req.body.productName,
-            brandName: req.body.brandName,
-            category: req.body.category,
-            description: req.body.description,
-            regularPrice: req.body.regularPrice,
-            salePrice: req.body.salePrice,
-            quantity: quantity, 
-            isListed: req.body.isListed,
-            image: imgArr
-        } : {
-            _id: id,
-            productName: req.body.productName,
-            brandName: req.body.brandName,
-            category: req.body.category,
-            description: req.body.description,
-            regularPrice: req.body.regularPrice,
-            salePrice: req.body.salePrice,
-            isListed: req.body.isListed,
-            quantity: quantity 
-        };
-        console.log(data);
-        await Product.findByIdAndUpdate(id, data);
-
-        res.redirect('/admin/products');
-    } catch (error) {
-        console.log(error.message);
-    }
+const loadEditProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const category = await Category.find();
+    Product.findById(id).then((data) => {
+      console.log(id);
+      console.log(data);
+      res.render("editProduct", { data: data, category: category });
+    });
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
 };
 
 
@@ -141,22 +117,85 @@ const editProduct = async (req, res) => {
 
 
 
+// edit product
+const editProduct = async (req, res) => {
+  try {
+    console.log(req.body);
+    const id = req.params.id;
+    console.log("object id");
+    console.log(id);
+    const fileNamesU = req.files.map((file) => file.filename);
+    console.log(fileNamesU);
+    const imgImp = req.body.imageImport.split(",");
+    const imgArr = [...imgImp, ...fileNamesU];
+    console.log(imgArr);
 
-
-
-// delete product
-const deleteProduct=async (req,res)=> {
-    try {
-        const id=req.params.id;
-        console.log(id);
-        await Product.findByIdAndDelete(id)
-        res.redirect('/admin/products')
+    const quantity = parseInt(req.body.quantity);
+    if (isNaN(quantity) || quantity < 0) {
+      throw new Error("Quantity must be a non-negative number.");
     }
-    catch(error) {
-        console.log(error.message);
-    }
-}
 
+    const data = req.files.length
+      ? {
+          _id: id,
+          productName: req.body.productName,
+          brandName: req.body.brandName,
+          category: req.body.category,
+          description: req.body.description,
+          regularPrice: req.body.regularPrice,
+          salePrice: req.body.salePrice,
+          quantity: quantity,
+          isListed: req.body.isListed,
+          image: imgArr,
+        }
+      : {
+          _id: id,
+          productName: req.body.productName,
+          brandName: req.body.brandName,
+          category: req.body.category,
+          description: req.body.description,
+          regularPrice: req.body.regularPrice,
+          salePrice: req.body.salePrice,
+          isListed: req.body.isListed,
+          quantity: quantity,
+        };
+    console.log(data);
+    await Product.findByIdAndUpdate(id, data);
+
+    res.redirect("/admin/products");
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
+};
+
+
+
+
+
+
+
+const softDeleteProduct = async (req, res) => {
+  try {
+      const id = req.params.id;
+
+      console.log("request params", req.params.id);
+      const product_isActive = await Product.findById(id);
+      if (product_isActive.isListed) {
+      console.log(product_isActive.isListed);
+      await Product.findByIdAndUpdate(id, { isListed: false });
+      }
+      if (!product_isActive.isListed) {
+      console.log(product_isActive.isListed);
+      await Product.findByIdAndUpdate(id, { isListed: true });
+      }
+
+      res.redirect("/admin/products");
+  } catch (error) {
+    res.redirect('/error')
+    
+  }
+};
 
 
 
@@ -166,35 +205,49 @@ const deleteProduct=async (req,res)=> {
 
 // delete product image
 const deleteImage = async (req, res) => {
-    const id = req.params.id;
-    const img = req.params.img;
+  const id = req.params.id;
+  const img = req.params.img;
 
-    try {
-        const updatedDocument = await Product.findOneAndUpdate(
-            { _id: id },
-            { $pull: { image: img } },
-            { new: true }
-        );
+  try {
+    const updatedDocument = await Product.findOneAndUpdate(
+      { _id: id },
+      { $pull: { image: img } },
+      { new: true }
+    );
 
-        if (!updatedDocument) {
-            console.log('Document not found');
-            return res.status(404).json({ message: 'Document not found' });
-        }
-
-        const imagePath = path.join(__dirname, '../public/admin-assets/imgs/products', img);
-
-        fs.unlink(imagePath, (err) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).json({ message: 'An error occurred while deleting the image' });
-            }
-            console.log('Image deleted successfully');
-            res.redirect('/admin/edit-product/' + id);
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'An error occurred while deleting the element' });
+    if (!updatedDocument) {
+      console.log("Document not found");
+      return res.status(404).json({ message: "Document not found" });
     }
+
+    const imagePath = path.join(
+      __dirname,
+      "../public/admin-assets/imgs/products",
+      img
+    );
+
+    fs.access(imagePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        console.error("File doesn't exist, can't delete:", imagePath);
+        return res.status(404).json({ message: "File not found" });
+      }
+
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("An error occurred while deleting the image:", err);
+          return res
+            .status(500)
+            .json({ message: "An error occurred while deleting the image" });
+        }
+        console.log("Image deleted successfully");
+        res.redirect("/admin/edit-product/" + id);
+      });
+    });
+  } 
+  catch (error) {
+    res.redirect('/error')
+    
+  }
 };
 
 
@@ -202,13 +255,12 @@ const deleteImage = async (req, res) => {
 
 
 
-
-module.exports= {
-    loadAddProduct,
-    addProduct,
-    loadProducts,
-    loadEditProduct,
-    editProduct,
-    deleteProduct,
-    deleteImage
-}
+module.exports = {
+  loadAddProduct,
+  addProduct,
+  loadProducts,
+  loadEditProduct,
+  editProduct,
+  softDeleteProduct,
+  deleteImage,
+};

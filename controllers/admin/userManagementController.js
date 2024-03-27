@@ -16,9 +16,10 @@ const loadUsers=async (req,res)=> {
         }
 
     }
-    catch(error) {
-        console.log(error.message);
-    }
+    catch (error) {
+        res.redirect('/error')
+        
+      }
 }
 
 
@@ -27,7 +28,7 @@ const loadUsers=async (req,res)=> {
 
 // load edit user
 const loadEditUser=async (req,res)=> {
-    const id=req.params.id;
+    try {    const id=req.params.id;
     User.findById(id).then((data) => {
         console.log(id);
         console.log(data);
@@ -35,6 +36,11 @@ const loadEditUser=async (req,res)=> {
     }).catch((error) => {
         console.log(error.message);
     });
+    } catch (error) {
+        res.redirect('/error')
+        
+      }
+
 }
 
 
@@ -59,9 +65,10 @@ const editUser=async (req,res)=> {
 
         res.redirect('/admin/users')
     }
-    catch(error) {
-        console.log(error.message);
-    }
+    catch (error) {
+        res.redirect('/error')
+        
+      }
 }
 
 
@@ -85,9 +92,10 @@ const blockOrUnblockUser = async (req, res) => {
         const updateData = user.isActive ? block : unBlock;
         await User.findByIdAndUpdate(id, updateData);
         res.redirect("/admin/users")
-    } catch (error) {
-        console.log(error.message);
-    }
+    }catch (error) {
+        res.redirect('/error')
+        
+      }
 };
 
 

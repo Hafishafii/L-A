@@ -11,9 +11,11 @@ const loadCategories=async (req,res)=> {
         res.render('categories',{categories:categories})
     }
     catch(error) {
-        console.log(error.message);
+        res.redirect('/error')
+        // console.log(error.message);
     }
 }
+
 
 
 
@@ -27,12 +29,20 @@ const loadAddCategory=async (req,res)=> {
         res.render('addCategory')
     }
     catch(error) {
-        console.log(error.message);
+        res.redirect('/error')
+        // console.log(error.message);
     }
 }
 
 
-const addCategory=async (req,res)=> {
+
+
+
+
+
+
+// add category 
+const addCategory = async (req, res) => {
     try {
         let category = new Category({
             name: req.body.name,
@@ -40,33 +50,32 @@ const addCategory=async (req,res)=> {
             isListed: req.body.isListed,
             image: req.file.filename
         });
-        console.log(category);
+        
+        category = await category.save();
 
-        category=await category.save();
-
-        if(category) {
-            req.flash('successMessage','Category added successfully!');
+        if (category) {
+            req.flash('successMessage', 'Category added successfully!');
             res.status(200).redirect('/admin/categories');
-        }
-        else {
+        } else {
+            req.flash('errorMessage', 'Category adding failed.');
             res.status(400).render('categories', {
-                message:'Category adding failed.',
-                categories:req.session.categories
+                message: req.flash('errorMessage'),
+                categories: req.session.categories
             });
         }
-    }
-    catch(error) {
-        if(error.code===11000 && error.keyPattern && error.keyPattern.name===1) {
-            res.status(409).render('categories', {
-                message:'Category name already exists.',
-                categories:req.session.categories
+    } catch (error) {
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.name === 1) {
+            req.flash('errorMessage', 'Category name already exists.');
+            res.status(409).render('addCategory', {
+                message: req.flash('errorMessage'),
+                categories: req.session.categories
             });
-        }
-        else {
+        } else {
             console.log(error.message);
+            req.flash('errorMessage', 'An error occurred while adding the category.');
             res.status(500).render('categories', {
-                message:'An error occured while adding the category.',
-                categories:req.session.categories
+                message: req.flash('errorMessage'),
+                categories: req.session.categories
             });
         }
     }
@@ -98,6 +107,7 @@ const loadEditCategory=async (req,res)=> {
         console.log(error.message);
     }
 }
+
 
 
 

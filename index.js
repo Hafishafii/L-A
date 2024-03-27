@@ -9,9 +9,11 @@ const {get}=require('http')
 const dotenv=require('dotenv')
 dotenv.config({path:'.env'})
 const session =require('express-session')
-
+const flash = require('connect-flash');
 
 const app=express()
+app.set('views','./views/userSide')
+
 
 // app.use(logger('dev'))
 
@@ -37,14 +39,15 @@ app.use('/',userRoute)
 app.use('/admin',adminRoute)
 
 
+app.use('/error',(req, res) => {
+    console.log("request object",req);
 
-
-// error page
-app.use(function(req,res) {
-    res.status(404);
-})
-
-
+    res.render('errorPage');
+});
+app.use('*',(req, res) => {
+    res.redirect('/error')
+});
+app.use(flash());
 
 
 // server

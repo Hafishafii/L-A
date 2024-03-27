@@ -72,14 +72,18 @@
                         </div><!-- End .header-search -->
                         
 
-                        <div class="dropdown cart-dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
-                                <i class="icon-shopping-cart"></i>
-                                <span class="cart-count">2</span>
-                            </a>
+						
+												<div class="dropdown cart-dropdown">
+												   <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+													   <i class="icon-shopping-cart"></i>
+													   <span class="cart-count">2</span>
+												   </a>
+					   
+												   
+											   	</div><!-- End .cart-dropdown --> 
 
-                            
-                        </div><!-- End .cart-dropdown -->
+
+						
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->
@@ -88,7 +92,7 @@
         <main class="main">
         	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
         		<div class="container">
-        			<h1 class="page-title">My Account<span>Shop</span></h1>
+        			<h1 class="page-title">My Account<span>L&A</span></h1>
         		</div><!-- End .container -->
         	</div><!-- End .page-header -->
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
@@ -97,94 +101,104 @@
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
 
-            <div class="page-content">
-            	<div class="dashboard">
-	                <div class="container">
-	                	<div class="row">
-	                		<aside class="col-md-4 col-lg-3">
-	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
-								    <li class="nav-item">
-								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" href="/logout">Sign Out</a>
-								    </li>
+			<div class="page-content">
+				<div class="dashboard">
+					<div class="container">
+						<div class="row">
+							<aside class="col-md-4 col-lg-3">
+								<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/addresses">Addresses</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/account-details">Account Details</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/logout">Sign Out</a>
+									</li>
 								</ul>
-	                		</aside><!-- End .col-lg-3 -->
+							</aside><!-- End .col-lg-3 -->
 
-	                		<div class="col-md-8 col-lg-9">
-	                			<div class="tab-content">
-								    <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
-								    	<p>Hello <span class="font-weight-normal text-dark"><%= userData.name %></span>  
-								    	<br>
-								    	From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
-								    </div><!-- .End .tab-pane -->
 
-								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-								    	<p>No order has been made yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-								    </div><!-- .End .tab-pane -->
-
-								    <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
-								    	<p>No downloads available yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-								    </div><!-- .End .tab-pane -->
-
-									<div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-										<% if (userData.address && userData.address.length > 0) { %>
-											<p>The following addresses will be used on the checkout page by default.</p>
-											<% userData.address.forEach(function(address,i) { %>
-												<div class="row">
-													<div class="col-lg-6">
-														<div class="card card-dashboard">
-															<div class="card-body">
-																<h3 class="card-title">Address</h3><!-- End .card-title -->
-																<p>
-																	<%= address.name %><br>
-																	<%= address.addressLine1 %><br>
-																	<%= address.addressLine2 %><br>
-																	<%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
-																	<%= address.phone %><br>
-																	<!-- <%= address.email %><br> -->
-																	<a href="/edit-address/<%= i %>">Edit <i class="icon-edit"></i></a>
-																	<button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger">Delete</button>
-																</p>
-															</div><!-- End .card-body -->
-														</div><!-- End .card-dashboard -->
-													</div><!-- End .col-lg-6 -->
-												</div><!-- End .row -->
-											<% }); %>
-										<% } else { %>
-											<p>No addresses added. Please add your addresses.</p>
-										<% } %>
-									
-										<a href="/add-address" class="btn btn-primary">Add Address</a>
+							<div class="col-md-8 col-lg-9">
+								<div class="tab-content">
+									<!-- Dashboard Tab Content -->
+									<div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+										<p>Hello <span class="font-weight-normal text-dark"><%= userData.name %></span>  
+											<br>
+											From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
 									</div><!-- .End .tab-pane -->
+		
+									<!-- Orders Tab Content -->
+									<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+										<p>No order has been made yet.</p>
+										<a href="/my-orders" class="btn btn-outline-primary-2"><span>Orders</span><i class="icon-long-arrow-right"></i></a>
+									</div><!-- .End .tab-pane -->
+		
+									<!-- Downloads Tab Content -->
+									<!-- Orders Tab Content -->
+									<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+										<p>No order has been made yet.</p>
+										<!-- Update the link to point to the order details page with the correct order ID -->
+										<a href="/my-orders" class="btn btn-outline-primary-2"><span>View Orders</span><i class="icon-long-arrow-right"></i></a>
+									</div><!-- .End .tab-pane -->
+
+		
+									<!-- Addresses Tab Content -->
+									<!-- addressTabContent.ejs -->
+										<div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+											<% if (userData.address && userData.address.length > 0) { %>
+												<p>The following addresses will be used on the checkout page by default.</p>
+												<% userData.address.forEach(function(address, i) { %>
+													<div class="row" id="address_<%= address._id %>">
+														<div class="col-lg-6">
+															<div class="card card-dashboard">
+																<div class="card-body">
+																	<h3 class="card-title"><%= address.addressType %></h3>
+																	<p>
+																		<%= address.name %><br>
+																		<%= address.addressLine1 %><br>
+																		<%= address.addressLine2 %><br>
+																		<%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
+																		<%= address.phone %><br>
+																		<a href="/edit-address/<%= address._id %>">Edit <i class="icon-edit"></i></a>
+																		<button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger">Delete</button>
+																	</p>
+																</div>
+															</div>
+														</div>
+													</div>
+												<% }); %>
+											<% } else { %>
+												<p>No addresses added. Please add your addresses.</p>
+											<% } %>                    
+											<a href="/add-address" class="btn btn-primary">Add Address</a>
+										</div><!-- .End .tab-pane -->
+
 									
 									<script>
 										function deleteAddress(addressId) {
-											fetch('/delete-address', {
+											fetch(`/delete-address/${addressId}`, {
 												method: 'DELETE',
 												headers: {
-													'Content-Type': 'application/json',
-												},
-												body: JSON.stringify({ id: addressId }),
+													'Content-Type': 'application/json'
+												}
 											})
 											.then(response => {
 												if (response.ok) {
 													console.log("Address deleted successfully");
+													// Remove the address div from the DOM
+													const addressDiv = document.getElementById(`address_${addressId}`);
+													addressDiv.remove();
 												} else {
 													console.error("Failed to delete address");
 												}
@@ -193,46 +207,43 @@
 												console.error("Error:", error);
 											});
 										}
-									</script>
-									
-									
-									
-									
-								    <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-                                        <form action="#">
+									</script>									
+		
+									<!-- Account Details Tab Content -->
+									<div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+										<form action="/updatePassword" method="POST">
 											<div class="row">
 												<div class="col-sm-6">
 													<label>Name *</label>
 													<input type="text" class="form-control" id="name" value="<%= userData.name %>" required>
 												</div><!-- End .col-sm-6 -->
 											</div><!-- End .row -->
-										
+		
 											<label>Email address *</label>
 											<input type="email" class="form-control" id="email" value="<%= userData.email %>" required>
-										
+		
 											<!-- Optional: Password Fields -->
-											<label>Current password (leave blank to leave unchanged)</label>
-											<input type="password" class="form-control" id="current-password" >
-										
-											<label>New password (leave blank to leave unchanged)</label>
-											<input type="password" class="form-control" id="new-password">
-										
-											<label>Confirm new password</label>
-											<input type="password" class="form-control mb-2" id="confirm-new-password">
-										
+											<label for="currentPassword">Current Password *</label>
+											<input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+		
+											<label for="newPassword">New Password *</label>
+											<input type="password" class="form-control" id="newPassword" name="newPassword" required>
+		
+											<label for="confirmNewPassword">Confirm New Password *</label>
+											<input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+		
 											<button type="submit" class="btn btn-outline-primary-2">
 												<span>SAVE CHANGES</span>
 												<i class="icon-long-arrow-right"></i>
 											</button>
 										</form>
-										
-                                    </div><!-- .End .tab-pane -->                                    
+									</div><!-- .End .tab-pane -->                                    
 								</div>
-	                		</div><!-- End .col-lg-9 -->
-	                	</div><!-- End .row -->
-	                </div><!-- End .container -->
-                </div><!-- End .dashboard -->
-            </div><!-- End .page-content -->
+							</div><!-- End .col-lg-9 -->
+						</div><!-- End .row -->
+					</div><!-- End .container -->
+				</div><!-- End .dashboard -->
+			</div><!-- End .page-content -->
         </main><!-- End .main -->
 
         <footer class="footer">
@@ -259,8 +270,8 @@
 	            				<h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
 
 	            				<ul class="widget-list">
-	            					<li><a href="about.html">About Molla</a></li>
-	            					<li><a href="#">How to shop on Molla</a></li>
+	            					<li><a href="about.html">About L&A</a></li>
+	            					<li><a href="#">How to shop on L&A</a></li>
 	            					<li><a href="#">FAQ</a></li>
 	            					<li><a href="contact.html">Contact us</a></li>
 	            					<li><a href="login.html">Log in</a></li>
@@ -302,7 +313,7 @@
 
 	        <div class="footer-bottom">
 	        	<div class="container">
-	        		<p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p><!-- End .footer-copyright -->
+	        		<p class="footer-copyright">Copyright © 2019 L&A Store. All Rights Reserved.</p><!-- End .footer-copyright -->
 	        		<figure class="footer-payments">
 	        			<img src="assets/images/payments.png" alt="Payment methods" width="272" height="20">
 	        		</figure><!-- End .footer-payments -->

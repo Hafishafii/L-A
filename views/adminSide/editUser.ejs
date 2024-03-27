@@ -117,14 +117,12 @@
                     dangerMode: true,
                 }).then((willBlock) => {
                     if (willBlock) {
-                        // Display success message
                         swal({
                             text: "The User Has been Blocked",
                             icon: "success",
                             timer: 3000,
                             buttons: false,
                         }).then(() => {
-                            // Implement the block functionality and redirect
                             location.href = `/admin/block?id=${userId}`;
                         })
                     }
@@ -140,14 +138,12 @@
                     dangerMode: true,
                 }).then((willUnblock) => {
                     if (willUnblock) {
-                        // Display success message
                         swal({
                             text: "The User Unblocked",
                             icon: "success",
                             timer: 3000,
                             buttons: false,
                         }).then(() => {
-                            // Implement the unblock functionality and redirect
                             location.href = `/admin/unblock?id=${userId}`;
                         });
                     }

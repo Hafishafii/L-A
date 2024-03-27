@@ -10,7 +10,8 @@ const loadLogin=async (req,res)=> {
     }
     catch(error) {
         console.log(error.message);
-        res.status(500).send("Internal Server Error");
+        res.redirect('/error')
+        // res.status(500).send("Internal Server Error");
     }
 }
 
@@ -44,7 +45,7 @@ const adminLogin=async (req,res)=> {
         }
     }
     catch(error) {
-        console.log(error.message);
+      res.redirect('/error')
     }
 }
 
@@ -55,7 +56,9 @@ const logOut=async (req, res)=> {
       req.session.destroy();
       res.redirect("/admin/login");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
+      res.redirect('/error')
+
     }
   };
   
@@ -63,7 +66,9 @@ const logOut=async (req, res)=> {
     try {
       res.render("adminDashboard");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
+      res.redirect('/error')
+
     }
   };
   

@@ -1,7 +1,7 @@
 const User = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
-// const Order = require("../../model/orderModel");
+const Order = require("../../model/orderModel");
 // const Coupon = require("../../model/couponModel");
 
 
@@ -31,7 +31,8 @@ const loadCart = async (req, res) => {
       categories: categories,
     });
   } catch (error) {
-    console.log(error.message);
+    res.redirect('/error')
+    
   }
 };
 
@@ -78,7 +79,8 @@ const addToCart = async (req, res) => {
     //   res.redirect('/cart')
     res.redirect("/cart");
   } catch (error) {
-    console.log(error.message);
+    res.redirect('/error')
+    
   }
 };
 
@@ -88,26 +90,26 @@ const addToCart = async (req, res) => {
 
 // change quantity in cart
 const changeQuantity = async (req, res) => {
-  console.log(req.body);
-  req.body.count = parseInt(req.body.count);
   try {
-    const data = await User.updateOne(
-      {
-        _id: req.session.user_id,
-        "cart.productId": req.body.productId,
-      },
-      {
-        $inc: {
-          "cart.$.quantity": req.body.count,
-        },
-      },
-      {
-        new: true,
+      const { productId, quantity } = req.body;
+
+      for (let i = 0; i < productId.length; i++) {
+          await User.updateOne(
+              {
+                  _id: req.session.user_id,
+                  "cart.productId": productId[i],
+              },
+              {
+                  $set: {
+                      "cart.$.quantity": parseInt(quantity[i]),
+                  },
+              }
+          );
       }
-    );
-    console.log("Dataa", data);
+      res.redirect('/cart');
   } catch (error) {
-    console.log(error.message);
+    res.redirect('/error')
+    
   }
 };
 
@@ -138,9 +140,9 @@ const deleteCartItem = async (req, res) => {
     console.log("Product removed from cart");
 
     res.redirect("/cart");
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ message: "Internal server error" });
+  }catch (error) {
+    res.redirect('/error')
+    
   }
 };
 
@@ -149,57 +151,37 @@ const deleteCartItem = async (req, res) => {
 
 
 //load checkout
-// const loadCheckout = async (req, res) => {
-//   try {
-//     const userData = await User.findById(req.session.user_id);
-//     const userCart = await User.findOne({ _id: req.session.user_id }).populate(
-//       "cart.productId"
-//     );
-//     const categories = await Category.find();
+const calculateTotal = (cart) => {
+  let total = 0;
+  cart.forEach((cartItem) => {
+      total += cartItem.productId.salePrice * cartItem.quantity;
+  });
+  return total;
+};
 
-//     // Use async/await to calculate wallet balance
-//     const walletResult = await User.aggregate([
-//       {
-//         $match: { _id: userData._id }, // Match the user by _id
-//       },
-//       {
-//         $unwind: "$wallet", // Unwind the 'wallet' array to work with individual transactions
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           totalAmount: { $sum: "$wallet.amount" }, // Calculate the sum of 'amount' values
-//         },
-//       },
-//     ]).exec();
+const loadCheckout = async (req, res) => {
+  try {
+      const userData = await User.findById(req.session.user_id);
+      const userCart = await User.findOne({ _id: req.session.user_id }).populate(
+          "cart.productId"
+      );
+      const categories = await Category.find();
+      
+      res.render("checkout", {
+          user: userData,
+          userCart: userCart,
+          userData: userData,
+          categories: categories,
+          calculateTotal: calculateTotal // Pass the calculateTotal function to the template
+      });
+  }catch (error) {
+    res.redirect('/error')
+    
+  }
+};
 
-//     let walletBalance;
 
-//     if (walletResult && walletResult.length > 0) {
-//       walletBalance = walletResult[0].totalAmount.toLocaleString("en-IN", {
-//         style: "currency",
-//         currency: "INR", // You can change 'USD' to 'INR' for Indian Rupees
-//       });
-//       console.log("Total Amount in Wallet:", walletBalance);
-//     } else {
-//       console.log("No wallet transactions found.");
-//     }
 
-//     req.session.returnTo1 = "/checkout";
-
-//     console.log("walletout", walletBalance);
-
-//     res.render("checkout", {
-//       user: userData,
-//       userCart: userCart,
-//       userData: userData,
-//       categories: categories,
-//       walletBalance: walletBalance,
-//     });
-//   } catch (error) {
-//     console.log(error.message);
-//   }
-// };
 
 
 
@@ -210,5 +192,6 @@ module.exports = {
   addToCart,
   changeQuantity,
   deleteCartItem,
-//   loadCheckout
+  calculateTotal,
+  loadCheckout,
 };

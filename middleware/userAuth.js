@@ -22,6 +22,8 @@ const isLogIn = async(req,res,next)=>{
     }
 }
 
+
+
 const isLogOut = async(req,res,next)=>{
     try {
         if(req.session.user_id){
@@ -36,7 +38,14 @@ const isLogOut = async(req,res,next)=>{
     }
 }
 
+
+
+
+
+
+
+
 module.exports = {
     isLogIn,
-    isLogOut
+    isLogOut,
 }

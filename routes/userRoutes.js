@@ -3,13 +3,16 @@ const user_route=express();
 const session=require('express-session');
 const config=require("../config/config")
 const auth=require('../middleware/userAuth')
-
+const errorHandler = require('../middleware/errorHandler');
 
 user_route.set('views','./views/userSide')
 
 const userController = require("../controllers/user/userController");
 const cartController = require("../controllers/user/cartController")
-
+const orderController = require("../controllers/user/orderController")
+ 
+user_route.get('/error',userController.errorPage)
+user_route.use(errorHandler);
 
 user_route.get('/',userController.loadHome)
 user_route.get('/signup',auth.isLogOut,userController.loadRegister)
@@ -28,14 +31,23 @@ user_route.post('/edit-address/:addressid',auth.isLogIn, userController.editAddr
 user_route.get('/add-address',auth.isLogIn, userController.loadAddAddress)
 user_route.post('/add-address', userController.addAddress)
 user_route.delete('/delete-address/:addressId', userController.deleteAddress);
-user_route.post('/search',userController.searchResult)
+user_route.get('/search', userController.searchResult);
+user_route.post('/updatepassword', auth.isLogIn, userController.updatePassword);
+user_route.get('/addresses',userController.renderAddress)
+user_route.get('/account-details',userController.renderAccountDetails)
 
 
 user_route.get('/cart',auth.isLogIn,cartController.loadCart)
-user_route.post('/add-to-cart',auth.isLogIn, cartController.addToCart)
+user_route.post('/add-to-cart',auth.isLogIn,cartController.addToCart)
 user_route.post('/change-quantity', cartController.changeQuantity)
 user_route.get('/remove-cart/:id', cartController.deleteCartItem)
-// user_route.get('/checkout',auth.isLogIn, cartController.loadCheckout)
+user_route.get('/checkout',auth.isLogIn, cartController.loadCheckout)
+
+
+user_route.post('/checkout', orderController.checkout)
+user_route.get('/my-orders', auth.isLogIn, orderController.loadOrderList)
+user_route.get('/order-success',orderController.orderSuccess)
+user_route.post('/cancel-order', orderController.cancelOrder);
 
 
 module.exports = user_route;  

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+<title>Chronocraft- admin</title>    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminassets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/adminassets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+     <!-- sidebar -->
+     <%- include('partials/sidebar')%>
+     <!-- sidebar -->
+    <main class="main-wrap">
+         <!-- header -->
+       <%- include('partials/header')%>
+       <!-- header -->
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order detail</h2>
+                </div>
+            </div>
+            <div class="card">
+    <header class="card-header">
+        <div class="row align-items-center">
+            <% orders.forEach(order => { %>
+                <div class="col-12 mb-15">
+                    <div>
+                        <i class="material-icons md-calendar_today"></i> <b><%= String(order.createdAt).slice(0, 16) %></b>
+                        <small class="text-muted">Order ID: <%= String(order._id).slice(-6) %></small>
+                    </div> 
+                    <div class="icontext align-items-start mt-3">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                <%= order.customerId.name %> <br> 
+                                <%= order.customerId.email %> <br> 
+                                <%= order.customerId.phoneNumber %>
+                            </p>
+                        </div>
+                    </div>
+                    <h6 class="mt-3">Products:</h6>
+                    <ul>
+                        <% order.products.forEach(product => { %>
+                            <li>
+                                <div class="product-info">
+                                    <span><strong><%= product.productId.productName %></strong></span> -
+                                    <span>Category: <%= product.productId.category %></span> - 
+                                    <span>Quantity: <%= product.quantity %></span> 
+                                </div>
+                            </li>
+                        <% }); %>
+                    </ul>
+                    <div>
+                        <strong>Order Status:</strong> <%= order.orderStatus %>
+                    </div>
+                    <% if (order.orderStatus === "CANCELLED") { %>
+                        <form action="/admin/continue-order" method="POST">
+                            <input type="hidden" name="orderId" value="<%= order._id %>">
+                            <button type="submit">Continue Order</button>
+                        </form>
+                    <% } else { %>
+                        <form action="/admin/cancelorder" method="POST">
+                            <input type="hidden" name="orderId" value="<%= order._id %>">
+                            <button type="submit">Cancel Order</button>
+                        </form>
+                    <% } %>
+                </div>
+            <% }); %>
+        </div>
+    </header> <!-- card-header end// -->
+</div> <!-- card end// -->
+
+                                                                                    
+                               
+        </section> <!-- content-main end// -->
+        <!-- footer -->
+        <%- include('partials/footer')%>
+        <!-- footer -->
+    </main>
+    <script src="/adminassets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminassets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminassets/js/vendors/select2.min.js"></script>
+    <script src="/adminassets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminassets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminassets/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>

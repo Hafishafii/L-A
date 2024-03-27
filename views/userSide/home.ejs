@@ -82,7 +82,7 @@
                     <div class="header-center">
                         <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
                             <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                            <form action="/search" method="post">
+                            <form action="/search">
                                 <div class="header-search-wrapper search-wrapper-wide">
                                     <label for="q" class="sr-only">Search</label>
                                     <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
@@ -133,10 +133,9 @@
                         </div><!-- End .compare-dropdown -->
 
                         <div class="dropdown cart-dropdown">
-                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <div class="icon">
                                     <i class="icon-shopping-cart"></i>
-                                    <!-- <span class="cart-count">2</span> -->
                                 </div>
                                 <p>Cart</p>
                             </a>
@@ -170,8 +169,6 @@
                             <ul class="menu sf-arrows">
                                 <li class="megamenu-container active">
                                     <a href="index.html" class="sf-with-ul">Home</a>
-
-                                   
                                 <li>
                                     <a href="category.html" class="sf-with-ul">Shop</a>
 
@@ -184,11 +181,10 @@
                                                             
                                                             <div class="menu-title">Shop Pages</div><!-- End .menu-title -->
                                                             <ul>
-                                                                <li><a href="cart.html">Cart</a></li>
-                                                                <li><a href="checkout.html">Checkout</a></li>
+                                                                <li><a href="/cart">Cart</a></li>
+                                                                <li><a href="/checkout">Checkout</a></li>
                                                                 <li><a href="wishlist.html">Wishlist</a></li>
-                                                                <li><a href="dashboard.html">My Account</a></li>
-                                                                <li><a href="#">Lookbook</a></li>
+                                                                <li><a href="/account">My Account</a></li>
                                                             </ul>
                                                         </div><!-- End .col-md-6 -->
                                                     </div><!-- End .row -->
@@ -744,7 +740,7 @@
                         <div class="banner-content text-center">
                             <img src="assets/images/popup/newsletter/logo.png" class="logo" alt="logo" width="60" height="15">
                             <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>
-                            <p>Subscribe to the Molla eCommerce newsletter to receive timely updates from your favorite products.</p>
+                            <p>Subscribe to the L&A eCommerce newsletter to receive timely updates from your favorite products.</p>
                             <form action="#">
                                 <div class="input-group input-group-round">
                                     <input type="email" class="form-control form-control-white" placeholder="Your Email Address" aria-label="Email Adress" required>
@@ -760,7 +756,7 @@
                         </div>
                     </div>
                     <div class="col-xl-2-5col col-lg-5 ">
-                        <img src="assets/images/popup/newsletter/img-1.jpg" class="newsletter-img" alt="newsletter">
+                        <img src="/adminassets/imgs/products/1711339946137-razerrr.webp" class="newsletter-img" alt="newsletter">
                     </div>
                 </div>
             </div>

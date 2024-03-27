@@ -1,0 +1,29 @@
+<!-- addressTabContent.ejs -->
+<div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+    <% if (userData.address && userData.address.length > 0) { %>
+        <p>The following addresses will be used on the checkout page by default.</p>
+        <% userData.address.forEach(function(address, i) { %>
+            <div class="row" id="address_<%= address._id %>">
+                <div class="col-lg-6">
+                    <div class="card card-dashboard">
+                        <div class="card-body">
+                            <h3 class="card-title"><%= address.addressType %></h3>
+                            <p>
+                                <%= address.name %><br>
+                                <%= address.addressLine1 %><br>
+                                <%= address.addressLine2 %><br>
+                                <%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
+                                <%= address.phone %><br>
+                                <a href="/edit-address/<%= address._id %>">Edit <i class="icon-edit"></i></a>
+                                <button onclick="deleteAddress('<%= address._id %>')" class="btn btn-danger">Delete</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No addresses added. Please add your addresses.</p>
+    <% } %>                    
+    <a href="/add-address" class="btn btn-primary">Add Address</a>
+</div><!-- .End .tab-pane -->

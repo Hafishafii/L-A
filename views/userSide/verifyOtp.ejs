@@ -104,57 +104,57 @@
     <script src="assets/js/main.js"></script>
 
 <script>
- // Function to handle OTP resend
+ 
 function resendOTP() {
 
-       // Make an AJAX request to resend the OTP
+      
        $.ajax({
-        url: '/resendOTP', // Replace this with the actual URL of your resend OTP route
-        type: 'GET', // Or 'POST' depending on your server implementation
+        url: '/resendOTP', 
+        type: 'GET', 
         success: function(response) {
             console.log("OTP Resent successfully");
-            // Handle success response if needed
+           
         },
         error: function(xhr, status, error) {
             console.error("Error resending OTP:", error);
-            // Handle error response if needed
+            
         }
     });
-    // Your logic to resend OTP
+   
     console.log("OTP Resent!");
     
 
-    // Disable the resend OTP button after clicking
+   
     disableResendButton();
 
-    // Start the timer again
+    
     startTimer();
 }
 
-// Function to enable the resend OTP button
+
 function enableResendButton() {
     document.getElementById("resendOTPBtn").style.display = "block";
 }
 
-// Function to disable the resend OTP button
+
 function disableResendButton() {
     document.getElementById("resendOTPBtn").style.display = "none";
 }
 
-// Function to start the timer
+
 function startTimer() {
-    var timer = 10; // 10 seconds
+    var timer = 10; 
     var intervalId = setInterval(function () {
         if (timer === 0) {
             clearInterval(intervalId);
-            enableResendButton(); // Enable the button after timer expires
+            enableResendButton(); 
         }
         document.getElementById("resendOTPBtn").textContent = "Resend OTP (" + timer + "s)";
         timer--;
     }, 1000);
 }
 
-// Start the timer when the page loads
+
 window.onload = function () {
     startTimer();
 };
