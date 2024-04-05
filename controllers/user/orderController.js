@@ -133,8 +133,6 @@ const showOrders = async (req, res) => {
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.body.orderId;
-
-    // Find the order by ID
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({
@@ -143,17 +141,14 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    // Update order status to CANCELLED
     order.orderStatus = "CANCELLED";
     await order.save();
 
-    // Increase product quantity back in stock for each product in the order
     for (const orderItem of order.products) {
       await Product.findByIdAndUpdate(orderItem.productId, { $inc: { quantity: orderItem.quantity } });
       console.log("Quantity increased for product:", orderItem.productId);
     }
 
-    // Render the order cancellation confirmation page
     res.render("orderCancelled");
   } catch (error) {
     console.error("Order Cancellation Error:", error);
