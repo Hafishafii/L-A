@@ -35,72 +35,68 @@ const checkout = async (req, res) => {
     if (!userId) {
       return res.status(401).json({
         status: false,
-        msg: "User not authenticated",
+        message: "User not authenticated",
       });
     }
 
     const user = await User.findById(userId);
-
-    if (!user || !user.cart) {
+    if (!user || !user.cart || user.cart.length === 0) {
       return res.status(400).json({
         status: false,
-        msg: "User or user's cart not found",
+        message: "User or user's cart not found",
       });
     }
 
-    const cart = user.cart;
-    const selectedAddressIndex = parseInt(req.body['selected-address-index']);
+    const selectedAddressIndex = parseInt(req.body['selected-address-index'], 10);
     if (isNaN(selectedAddressIndex) || selectedAddressIndex < 0 || selectedAddressIndex >= user.address.length) {
       return res.status(400).json({
         status: false,
-        msg: "Invalid selected address index",
+        message: "Invalid selected address index",
       });
     }
     const selectedAddress = user.address[selectedAddressIndex];
+
     const productsOutOfStock = [];
-    for (const cartItem of cart) {
-      const product = await Product.findById(cartItem.productId);
+    for (const cartItem of user.cart) {
+      const product = await Product.findById(cartItem.productId).exec();
       if (!product || product.quantity < cartItem.quantity) {
         productsOutOfStock.push(cartItem.productId);
       }
     }
 
     if (productsOutOfStock.length > 0) {
-      return res.render('orderFailure')
+      return res.status(400).render('orderFailure', { productsOutOfStock });
     }
+
     const order = new Order({
       customerId: userId,
-      quantity: req.body.quantity,
-      price: req.body.salePrice,
-      products: cart,
+      products: user.cart,
       totalAmount: req.body.total,
       shippingAddress: selectedAddress,
       paymentDetails: 'COD',
-      orderStatus: "PLACED" 
+      orderStatus: "PLACED"
     });
 
     const orderSuccess = await order.save();
-
-    if (orderSuccess) {
-      user.cart = [];
-      await user.save();
-
-      for (const cartItem of cart) {
-        const product = await Product.findById(cartItem.productId);
-        if (product) {
-          product.quantity -= cartItem.quantity;
-          await product.save();
-          console.log("Quantity decreased for product:", product._id);
-        }
-      }
-      // Pass orderId to the successPage template
-      return res.render('successPage', { orderId: order._id });  
+    if (!orderSuccess) {
+      throw new Error("Failed to save order");
     }
-  }catch (error) {
-    res.redirect('/error')
-    
+
+    user.cart = [];
+    await user.save();
+
+    for (const cartItem of order.products) {
+      await Product.findByIdAndUpdate(cartItem.productId, { $inc: { quantity: -cartItem.quantity } });
+      console.log("Updated product stock for:", cartItem.productId);
+    }
+
+    return res.render('successPage', { orderId: order._id });
+  } catch (error) {
+    console.error("Checkout Error:", error);
+    res.status(500).redirect('/error');
   }
 };
+
 
 
 
@@ -138,33 +134,33 @@ const cancelOrder = async (req, res) => {
   try {
     const orderId = req.body.orderId;
 
+    // Find the order by ID
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({
         status: false,
-        msg: "Order not found",
+        message: "Order not found",
       });
     }
 
+    // Update order status to CANCELLED
     order.orderStatus = "CANCELLED";
     await order.save();
 
-    // Increase product quantity
+    // Increase product quantity back in stock for each product in the order
     for (const orderItem of order.products) {
-      const product = await Product.findById(orderItem.productId);
-      if (product) {
-        product.quantity += orderItem.quantity;
-        await product.save();
-        console.log("Quantity increased for product:", product._id);
-      }
+      await Product.findByIdAndUpdate(orderItem.productId, { $inc: { quantity: orderItem.quantity } });
+      console.log("Quantity increased for product:", orderItem.productId);
     }
 
+    // Render the order cancellation confirmation page
     res.render("orderCancelled");
-  }catch (error) {
-    res.redirect('/error')
-    
+  } catch (error) {
+    console.error("Order Cancellation Error:", error);
+    res.status(500).redirect('/error');
   }
 };
+
 
 
 
