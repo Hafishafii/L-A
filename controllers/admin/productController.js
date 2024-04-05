@@ -120,54 +120,42 @@ const loadEditProduct = async (req, res) => {
 // edit product
 const editProduct = async (req, res) => {
   try {
-    console.log(req.body);
-    const id = req.params.id;
-    console.log("object id");
-    console.log(id);
-    const fileNamesU = req.files.map((file) => file.filename);
-    console.log(fileNamesU);
-    const imgImp = req.body.imageImport.split(",");
-    const imgArr = [...imgImp, ...fileNamesU];
-    console.log(imgArr);
+    const id = req.params.id; 
+    const fileNamesU = req.files.map((file) => file.filename); 
+    const imgImp = req.body.imageImport.split(","); 
+    const imgArr = [...imgImp, ...fileNamesU]; 
 
     const quantity = parseInt(req.body.quantity);
     if (isNaN(quantity) || quantity < 0) {
       throw new Error("Quantity must be a non-negative number.");
     }
 
-    const data = req.files.length
-      ? {
-          _id: id,
-          productName: req.body.productName,
-          brandName: req.body.brandName,
-          category: req.body.category,
-          description: req.body.description,
-          regularPrice: req.body.regularPrice,
-          salePrice: req.body.salePrice,
-          quantity: quantity,
-          isListed: req.body.isListed,
-          image: imgArr,
-        }
-      : {
-          _id: id,
-          productName: req.body.productName,
-          brandName: req.body.brandName,
-          category: req.body.category,
-          description: req.body.description,
-          regularPrice: req.body.regularPrice,
-          salePrice: req.body.salePrice,
-          isListed: req.body.isListed,
-          quantity: quantity,
-        };
-    console.log(data);
-    await Product.findByIdAndUpdate(id, data);
+    const category = await Category.findOne({ name: req.body.category });
+    if (!category) {
+      console.error("Category not found");
+      return res.status(404).send("Category not found");
+    }
 
+    const data = {
+      productName: req.body.productName,
+      brandName: req.body.brandName,
+      category: category._id, 
+      description: req.body.description,
+      regularPrice: req.body.regularPrice,
+      salePrice: req.body.salePrice,
+      quantity: quantity,
+      isListed: req.body.isListed === 'on', 
+      image: imgArr,
+    };
+
+    await Product.findByIdAndUpdate(id, data);
     res.redirect("/admin/products");
   } catch (error) {
-    res.redirect('/error')
-    
+    console.error("Error updating product:", error);
+    res.redirect('/error');
   }
 };
+
 
 
 
