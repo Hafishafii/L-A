@@ -60,32 +60,38 @@
                                 }
                         
                                 function validateImage(input) {
-                                    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
-                                    const maxSize = 5242880; // 5MB in bytes
-                        
-                                    const files = input.files;
-                                    const errorMessage = document.getElementById('imageError');
-                        
-                                    if (files.length === 0) {
-                                        errorMessage.style.display = 'none';
-                                        return true;
-                                    }
-                        
-                                    const file = files[0];
-                        
-                                    if (!allowedExtensions.exec(file.name)) {
-                                        errorMessage.style.display = 'block';
-                                        return false;
-                                    }
-                        
-                                    if (file.size > maxSize) {
-                                        errorMessage.style.display = 'block';
-                                        return false;
-                                    }
-                        
-                                    errorMessage.style.display = 'none';
-                                    return true;
+                                const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+                                const maxSize = 5242880; 
+
+                                const files = input.files;
+                                const errorMessage = document.getElementById('imageError');
+
+                                if (files.length > 5) {
+                                    errorMessage.innerText = 'You can only upload up to 5 images.';
+                                    errorMessage.style.display = 'block';
+                                    return false;
                                 }
+
+                                for (let i = 0; i < files.length; i++) {
+                                    const file = files[i];
+
+                                    if (!allowedExtensions.exec(file.name)) {
+                                        errorMessage.innerText = 'Please upload a valid image file (jpg, jpeg, png, gif).';
+                                        errorMessage.style.display = 'block';
+                                        return false;
+                                    }
+
+                                    if (file.size > maxSize) {
+                                        errorMessage.innerText = 'Please ensure image files are under 5MB.';
+                                        errorMessage.style.display = 'block';
+                                        return false;
+                                    }
+                                }
+
+                                errorMessage.style.display = 'none';
+                                return true;
+                            }
+
                         
                                 function validateForm() {
                                     const input = document.getElementById('image');

@@ -25,9 +25,13 @@ const securePassword = async (password) => {
 
 
 
+
+
 const generateOtp = () => {
   return Math.floor(Math.random() * 9000 + 1000);
 };
+
+
 
 
 
@@ -81,6 +85,11 @@ const sendMail = async (req, res) => {
 
 
 
+
+
+
+
+
 //  resend OTP
 const resendOTP = async (req, res) => {
   try {
@@ -120,10 +129,17 @@ const resendOTP = async (req, res) => {
 
 
 
+
+
+
+
+
 // ------------------load OTP page------------------
 const loadotpPage = (req, res) => {
   res.render("verifyOtp");
 };
+
+
 
 
 
@@ -165,6 +181,11 @@ const verifyotp = async (req, res) => {
 
 
 
+
+
+
+
+
 const loadRegister = async (req, res) => {
   try {
     res.render("login");
@@ -173,6 +194,12 @@ const loadRegister = async (req, res) => {
     
   }
 };
+
+
+
+
+
+
 
 
 
@@ -186,6 +213,10 @@ const loadLogin = async (req, res) => {
     
   }
 };
+
+
+
+
 
 
 
@@ -233,6 +264,11 @@ const userLogin = async (req, res) => {
 
 
 
+
+
+
+
+
 const userLogOut = async (req, res) => {
   try {
     const userSession = req.session.user;
@@ -243,6 +279,12 @@ const userLogOut = async (req, res) => {
     
   }
 };
+
+
+
+
+
+
 
 
 
@@ -275,6 +317,12 @@ const loadHome = async (req, res) => {
 
 
 
+
+
+
+
+
+
 const error = async (req, res) => {
   try {
     res.render("errorPage");
@@ -283,6 +331,11 @@ const error = async (req, res) => {
     
   }
 };
+
+
+
+
+
 
 
 
@@ -307,6 +360,11 @@ const productView = async (req, res) => {
     
   }
 };
+
+
+
+
+
 
 
 
@@ -337,6 +395,11 @@ const loadAddAddress = async (req, res) => {
     
   }
 };
+
+
+
+
+
 
 
 
@@ -377,10 +440,15 @@ const addAddress = async (req, res) => {
 
 
 
+
+
+
+
+
 // load edit address
 const loadEditAddress = async (req, res) => {
   try {
-    const addressId = req.params.id; // Assuming id is used in the route parameter
+    const addressId = req.params.id; 
     const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
 
@@ -389,7 +457,7 @@ const loadEditAddress = async (req, res) => {
       throw new Error("User or address not found");
     }
 
-    // Find the address by its ID
+    
     const address = user.address.find(
       (address) => address._id.toString() === addressId
     );
@@ -409,6 +477,11 @@ const loadEditAddress = async (req, res) => {
     
   }
 };
+
+
+
+
+
 
 
 
@@ -457,6 +530,10 @@ const editAddress = async (req, res) => {
 
 
 
+
+
+
+
 // delete address
 const deleteAddress = async (req, res) => {
   try {
@@ -481,6 +558,8 @@ const deleteAddress = async (req, res) => {
     
   }
 };
+
+
 
 
 
@@ -551,6 +630,8 @@ const searchResult = async (req, res) => {
 
 
 
+
+
 const updatePassword = async (req, res) => {
   try {
     const userId = req.session.user_id;
@@ -561,7 +642,7 @@ const updatePassword = async (req, res) => {
       user.password
     );
     if (!isPasswordCorrect) {
-      return res.render("userAccount", {
+      return res.render("accountDetails", {
         userData: user,
         activeTab: "tab-account",
         message: "Current password is incorrect",
@@ -569,13 +650,12 @@ const updatePassword = async (req, res) => {
     }
 
     if (req.body.newPassword !== req.body.confirmNewPassword) {
-      return res.render("userAccount", {
+      return res.render("accountDetails", {
         userData: user,
         activeTab: "tab-account",
         message: "New password and confirm new password do not match",
       });
     }
-
     const newPasswordHash = await bcrypt.hash(req.body.newPassword, 10);
 
     user.password = newPasswordHash;
@@ -588,9 +668,10 @@ const updatePassword = async (req, res) => {
     });
   }catch (error) {
     res.redirect('/error')
-    
   }
 };
+
+
 
 
 

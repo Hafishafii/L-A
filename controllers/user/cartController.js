@@ -8,6 +8,8 @@ const Order = require("../../model/orderModel");
 
 
 
+
+
 //load cart
 const loadCart = async (req, res) => {
   try {
@@ -39,10 +41,15 @@ const loadCart = async (req, res) => {
 
 
 
+
+
+
+
+
+
 //add to cart
 const addToCart = async (req, res) => {
   try {
-    console.log(req.body,"BODYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
     const productId = req.body.productId;
     const quantity = parseInt(req.body.quantity);
     console.log(
@@ -88,6 +95,10 @@ const addToCart = async (req, res) => {
 
 
 
+
+
+
+
 // change quantity in cart
 const changeQuantity = async (req, res) => {
   try {
@@ -112,6 +123,10 @@ const changeQuantity = async (req, res) => {
     
   }
 };
+
+
+
+
 
 
 
@@ -150,6 +165,10 @@ const deleteCartItem = async (req, res) => {
 
 
 
+
+
+
+
 //load checkout
 const calculateTotal = (cart) => {
   let total = 0;
@@ -172,7 +191,7 @@ const loadCheckout = async (req, res) => {
           userCart: userCart,
           userData: userData,
           categories: categories,
-          calculateTotal: calculateTotal // Pass the calculateTotal function to the template
+          calculateTotal: calculateTotal 
       });
   }catch (error) {
     res.redirect('/error')

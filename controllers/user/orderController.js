@@ -6,20 +6,43 @@ const mongoose = require("mongoose");
 const { stringify } = require("querystring");
 
 
+
+
+
+
+
 //load order details page
 const loadOrderList = async (req, res) => {
-  console.log('loadOOOOOOOOOOOOOOOOOO');
   try {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 2; 
+    const skip = (page - 1) * limit;
+
     const userData = await User.findById(req.session.user_id);
     const categories = await Category.find();
-    const orders = await Order.find({ customerId: req.session.user_id });
+    const orders = await Order.find({ customerId: req.session.user_id })
+                              .skip(skip)
+                              .limit(limit);
 
-    res.render('orderList', { orders: orders, userData: userData, categories: categories });
-  }catch (error) {
-    res.redirect('/error')
-    
+    const totalOrders = await Order.countDocuments({ customerId: req.session.user_id });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    console.log(JSON.stringify(orders, null, 2));
+
+    res.render('orderList', {
+      orders: orders,
+      userData: userData,
+      categories: categories,
+      currentPage: page,
+      totalPages: totalPages
+    });
+  } catch (error) {
+    console.error('Error loading order list:', error);
+    res.redirect('/error');
   }
 };
+
+
 
 
 

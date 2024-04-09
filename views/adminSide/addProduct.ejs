@@ -79,7 +79,7 @@
                                         <div id="image-container"></div>
                                         <div class="input-upload">
                                             <img src="/adminassets/imgs/theme/upload.svg" alt="">
-                                            <input multiple name="image" id="image" class="form-control" type="file" accept="image/*">
+                                            <input multiple name="image" id="image" class="form-control" type="file" onclick="removeImageFromInput()">
                                         </div>
                                     </div>
                                 </div>
@@ -114,57 +114,68 @@
                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
                             
-                            <script>
-                                const imageInput = document.getElementById('image');
-                                const imageContainer = document.getElementById('image-container');
-                            
-                                imageInput.addEventListener('change', function() {
-                                    const files = Array.from(imageInput.files);
-                                    const maxImages = 5;
-                                    const existingImages = imageContainer.querySelectorAll('img').length;
-                                    if (files.length + existingImages > maxImages) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Oops...',
-                                            text: 'You can upload a maximum of ' + maxImages + ' images.'
-                                        });
-                                        return;
-                                    }
-                                    files.forEach(file => {
-                                        const reader = new FileReader();
-                                        reader.onload = function(e) {
-                                            const imageElement = document.createElement('img');
-                                            imageElement.src = e.target.result;
-                                            imageElement.classList.add('preview-image');
-                            
-                                            const deleteButton = document.createElement('button');
-                                            deleteButton.textContent = '❌';
-                                            deleteButton.classList.add('delete-button');
-                                            deleteButton.addEventListener('click', function() {
-                                                imageContainer.removeChild(imageElement);
-                                                imageContainer.removeChild(deleteButton);
-                                                removeImageFromInput(file);
+                                    <script>
+                                        const imageInput = document.getElementById('image');
+                                        const imageContainer = document.getElementById('image-container');
+                                    
+                                        imageInput.addEventListener('change', function() {
+                                            const files = Array.from(imageInput.files);
+                                            const maxImages = 5;
+                                            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
+                                            const existingImages = imageContainer.querySelectorAll('img').length;
+                                            
+                                            if (files.length + existingImages > maxImages) {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'You can upload a maximum of ' + maxImages + ' images.'
+                                                });
+                                                return;
+                                            }
+                                    
+                                            files.forEach(file => {
+                                                if (!allowedTypes.includes(file.type)) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Invalid File Type',
+                                                        text: 'Only images (JPG, PNG, GIF) are allowed.'
+                                                    });
+                                                } else {
+                                                    const reader = new FileReader();
+                                                    reader.onload = function(e) {
+                                                        const imageElement = document.createElement('img');
+                                                        imageElement.src = e.target.result;
+                                                        imageElement.classList.add('preview-image');
+                                    
+                                                        const deleteButton = document.createElement('button');
+                                                        deleteButton.textContent = '❌';
+                                                        deleteButton.classList.add('delete-button');
+                                                        deleteButton.addEventListener('click', function() {
+                                                            imageContainer.removeChild(imageElement);
+                                                            imageContainer.removeChild(deleteButton);
+                                                        });
+                                    
+                                                        imageContainer.appendChild(imageElement);
+                                                        imageContainer.appendChild(deleteButton);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
                                             });
-                            
-                                            imageContainer.appendChild(imageElement);
-                                            imageContainer.appendChild(deleteButton);
-                                        };
-                                        reader.readAsDataURL(file);
-                                    });
-                                });
-                            
-                                function removeImageFromInput(fileToRemove) {
-                                    const files = Array.from(imageInput.files);
-                                    const index = files.indexOf(fileToRemove);
-                                    if (index !== -1) {
-                                        files.splice(index, 1);
-                                        imageInput.value = '';
-                                        files.forEach(file => {
-                                            imageInput.files.add(file);
                                         });
-                                    }
-                                }
-                            </script>
+                                    
+                                        function removeImageFromInput(fileToRemove) {
+                                            const files = Array.from(imageInput.files);
+                                            const index = files.indexOf(fileToRemove);
+                                            if (index !== -1) {
+                                                files.splice(index, 1);
+                                                imageInput.value = '';
+                                                files.forEach(file => {
+                                                    imageInput.files.add(file);
+                                                });
+                                            }
+                                        }
+                                    </script>
+                                    
                             
                             
                             

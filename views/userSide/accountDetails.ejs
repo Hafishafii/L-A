@@ -57,38 +57,38 @@
             </header><!-- End .header -->
 
             <div class="container table-container">
-                <form action="/updatePassword" method="POST">
+                <form action="/updatepassword" method="POST">
                     <div class="form-group">
                         <label for="name">Name *</label>
                         <input type="text" class="form-control" id="name" value="<%= userData.name %>" required>
                     </div>
-
+            
                     <div class="form-group">
                         <label for="email">Email address *</label>
                         <input type="email" class="form-control" id="email" value="<%= userData.email %>" required>
                     </div>
-
+            
                     <div class="form-group">
                         <label for="currentPassword">Current Password *</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
                     </div>
-
+            
                     <div class="form-group">
                         <label for="newPassword">New Password *</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                     </div>
-
+            
                     <div class="form-group">
                         <label for="confirmNewPassword">Confirm New Password *</label>
                         <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
                     </div>
-
+            
                     <button type="submit" class="btn btn-outline-primary-2">
                         <span>SAVE CHANGES</span>
                         <i class="icon-long-arrow-right"></i>
                     </button>
                 </form>
-            </div><!-- End .container -->
+            </div><!-- End .container -->            
 
             <footer class="footer">
                 <div class="footer-middle">

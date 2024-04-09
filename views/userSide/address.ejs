@@ -1,161 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Addresse</title>
-    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
-    <style>
-        body {
-            text-align: center;
-            padding: 40px 0;
-            background: #EBF0F5;
-            font-family: 'Nunito Sans', sans-serif;
-        }
-        h1 {
-            color: #000000;
-            font-weight: 900;
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #000000;
-            font-size: 20px;
-            margin: 0;
-        }
-        i {
-            color: #000000;
-            font-size: 100px;
-            line-height: 200px;
-            margin-left: -15px;
-        }
-        .card {
-            background: white;
-            padding: 60px;
-            border-radius: 4px;
-            box-shadow: 0 2px 3px #C8D0D8;
-            display: flex; /* Align items horizontally */
-            flex-direction: column; /* Align items vertically */
-            align-items: center; /* Center align items horizontally */
-            margin: 0 auto;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #000000;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            margin-right: 10px;
-            text-decoration: none; /* Remove underline from anchor */
-        }
-        .logo {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="/assets/images/laptopLogo.jpg" alt="Logo" width="150">
-        </div>
-        <h1>Addressess </h1>
-    </header>
-    <div class="card">
-        <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-            <% if (userData.address && userData.address.length > 0) { %>
-                <p>The following addresses will be used on the checkout page by default.</p>
-                <% userData.address.forEach(function(address, i) { %>
-                <div class="row" id="address_<%= address._id %>">
-                    <div class="col-lg-6">
-                        <div class="card card-dashboard">
-                            <div class="card-body">
-                                <h3 class="card-title"><%= address.addressType %></h3>
-                                <p>
-                                    <%= address.name %><br>
-                                    <%= address.addressLine1 %><br>
-                                    <%= address.addressLine2 %><br>
-                                    <%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
-                                    <%= address.phone %><br>
-                                </p>
-                                <div class="btn-group">
-                                    <a href="/edit-address/<%= address._id %>" class="btn">Edit</a>
-                                    <button onclick="confirmDelete('<%= address._id %>')" class="btn">Delete</button>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Addresse</title>
+        <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
+        <style>
+            body {
+                text-align: center;
+                padding: 40px 0;
+                background: #EBF0F5;
+                font-family: 'Nunito Sans', sans-serif;
+            }
+            h1 {
+                color: #000000;
+                font-weight: 900;
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+            p {
+                color: #000000;
+                font-size: 20px;
+                margin: 0;
+            }
+            i {
+                color: #000000;
+                font-size: 100px;
+                line-height: 200px;
+                margin-left: -15px;
+            }
+            .card {
+                background: white;
+                padding: 60px;
+                border-radius: 4px;
+                box-shadow: 0 2px 3px #C8D0D8;
+                display: flex; /* Align items horizontally */
+                flex-direction: column; /* Align items vertically */
+                align-items: center; /* Center align items horizontally */
+                margin: 0 auto;
+            }
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #000000;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+                margin-right: 10px;
+                text-decoration: none; /* Remove underline from anchor */
+            }
+            .logo {
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <img src="/assets/images/laptopLogo.jpg" alt="Logo" width="150">
+            </div>
+            <h1>Addressess </h1>
+        </header>
+        <div class="card">
+            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                <% if (userData.address && userData.address.length > 0) { %>
+                    <p>The following addresses will be used on the checkout page by default.</p>
+                    <% userData.address.forEach(function(address, i) { %>
+                    <div class="row" id="address_<%= address._id %>">
+                        <div class="col-lg-6">
+                            <div class="card card-dashboard">
+                                <div class="card-body">
+                                    <h3 class="card-title"><%= address.addressType %></h3>
+                                    <p>
+                                        <%= address.name %><br>
+                                        <%= address.addressLine1 %><br>
+                                        <%= address.addressLine2 %><br>
+                                        <%= address.city %>, <%= address.state %> <%= address.pinCode %><br>
+                                        <%= address.phone %><br>
+                                    </p>
+                                    <div class="btn-group">
+                                        <a href="/edit-address/<%= address._id %>" class="btn">Edit</a>
+                                        <button onclick="confirmDelete('<%= address._id %>')" class="btn">Delete</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <% }); %>
-            <% } else { %>
-            <p>No addresses added. Please add your addresses.</p>
-            <% } %>                    
-            <a href="/add-address" class="btn btn-primary">Add Address</a>
-        </div><!-- .End .tab-pane -->
-    
-        <script>
-            function confirmDelete(addressId) {
-                swal({
-                    title: "Are you sure?",
-                    text: "Once deleted, you will not be able to recover this address!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        deleteAddress(addressId);
-                    } else {
-                        swal("Your address is safe!");
-                    }
-                });
-            }
+                    <% }); %>
+                <% } else { %>
+                <p>No addresses added. Please add your addresses.</p>
+                <% } %>                    
+                <a href="/add-address" class="btn btn-primary">Add Address</a>
+            </div><!-- .End .tab-pane -->
+        
+            <script>
+                function confirmDelete(addressId) {
+                    swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, you will not be able to recover this address!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            deleteAddress(addressId);
+                        } else {
+                            swal("Your address is safe!");
+                        }
+                    });
+                }
 
-            function deleteAddress(addressId) {
-                fetch(`/delete-address/${addressId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log("Address deleted successfully");
-                        const addressDiv = document.getElementById(`address_${addressId}`);
-                        addressDiv.remove();
-                    } else {
-                        console.error("Failed to delete address");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-            }
-        </script>
-    </div>
+                function deleteAddress(addressId) {
+                    fetch(`/delete-address/${addressId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log("Address deleted successfully");
+                            const addressDiv = document.getElementById(`address_${addressId}`);
+                            addressDiv.remove();
+                        } else {
+                            console.error("Failed to delete address");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                }
+            </script>
+        </div>
 
-    <footer class="footer">
-        <div class="footer-middle">
-            <div class="container">
-                <div class="row">
-                    <!-- Your footer content goes here -->
-                </div><!-- End .row -->
-            </div><!-- End .container -->
-        </div><!-- End .footer-middle -->
+        <footer class="footer">
+            <div class="footer-middle">
+                <div class="container">
+                    <div class="row">
+                        <!-- Your footer content goes here -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .footer-middle -->
 
-        <div class="footer-bottom">
-            <div class="container">
-                <p class="footer-copyright">Copyright © 2019 L&A Store. All Rights Reserved.</p>
-                <figure class="footer-payments">
-                    <img src="assets/images/payments.png" alt="Payment methods" width="272" height="20">
-                </figure>
-            </div><!-- End .container -->
-        </div><!-- End .footer-bottom -->
-    </footer><!-- End .footer -->
-</body>
+            <div class="footer-bottom">
+                <div class="container">
+                    <p class="footer-copyright">Copyright © 2019 L&A Store. All Rights Reserved.</p>
+                    <figure class="footer-payments">
+                        <img src="assets/images/payments.png" alt="Payment methods" width="272" height="20">
+                    </figure>
+                </div><!-- End .container -->
+            </div><!-- End .footer-bottom -->
+        </footer><!-- End .footer -->
+    </body>
 </html>

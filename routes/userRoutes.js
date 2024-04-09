@@ -34,7 +34,7 @@ user_route.delete('/delete-address/:addressId', userController.deleteAddress);
 user_route.get('/search', userController.searchResult);
 user_route.post('/updatepassword', auth.isLogIn, userController.updatePassword);
 user_route.get('/addresses',userController.renderAddress)
-user_route.get('/account-details',userController.renderAccountDetails)
+user_route.get('/account-details',auth.isLogIn,userController.renderAccountDetails)
 
 
 user_route.get('/cart',auth.isLogIn,cartController.loadCart)

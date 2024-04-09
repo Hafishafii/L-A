@@ -140,8 +140,7 @@
 		
 									<!-- Orders Tab Content -->
 									<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-										<p>No order has been made yet.</p>
-										<a href="/my-orders" class="btn btn-outline-primary-2"><span>Orders</span><i class="icon-long-arrow-right"></i></a>
+										<a href="/my-orders" class="btn btn-outline-primary-2"><span>Your Orders</span><i class="icon-long-arrow-right"></i></a>
 									</div><!-- .End .tab-pane -->
 		
 									<!-- Downloads Tab Content -->
@@ -210,34 +209,7 @@
 									</script>									
 		
 									<!-- Account Details Tab Content -->
-									<div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-										<form action="/updatePassword" method="POST">
-											<div class="row">
-												<div class="col-sm-6">
-													<label>Name *</label>
-													<input type="text" class="form-control" id="name" value="<%= userData.name %>" required>
-												</div><!-- End .col-sm-6 -->
-											</div><!-- End .row -->
-		
-											<label>Email address *</label>
-											<input type="email" class="form-control" id="email" value="<%= userData.email %>" required>
-		
-											<!-- Optional: Password Fields -->
-											<label for="currentPassword">Current Password *</label>
-											<input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
-		
-											<label for="newPassword">New Password *</label>
-											<input type="password" class="form-control" id="newPassword" name="newPassword" required>
-		
-											<label for="confirmNewPassword">Confirm New Password *</label>
-											<input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
-		
-											<button type="submit" class="btn btn-outline-primary-2">
-												<span>SAVE CHANGES</span>
-												<i class="icon-long-arrow-right"></i>
-											</button>
-										</form>
-									</div><!-- .End .tab-pane -->                                    
+									                                   
 								</div>
 							</div><!-- End .col-lg-9 -->
 						</div><!-- End .row -->
