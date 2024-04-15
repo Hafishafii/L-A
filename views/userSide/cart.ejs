@@ -124,9 +124,13 @@
                                                 <td class="price-col">$<%= cartItem.productId.salePrice %></td>
                                                 <td class="quantity-col">
                                                     <div class="cart-product-quantity">
-                                                        <input type="number" class="form-control" value="<%= cartItem.quantity %>" min="1" max="10" step="1" data-decimals="0" required onchange="updateTotal(this)">
+                                                        <input type="number" class="form-control" value="<%= cartItem.quantity %>" min="1" max="<%= cartItem.productId.quantity %>" step="1" data-decimals="0" required onchange='updateTotal(this, <%= cartItem.productId.quantity %>)'>
                                                     </div>
                                                 </td>
+                                                <div id="outOfStockModal" style="display:none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid black; padding: 20px; z-index: 1000;">
+                                                    <p>Sorry, you can't add more units of this product to the cart as it's out of stock.</p>
+                                                    <button onclick="closeOutOfStockModal()">Close</button>
+                                                </div>                                                                                                                                       
                                                 <td class="total-col">$<%= (cartItem.productId.salePrice * cartItem.quantity).toFixed(2) %></td>
                                                 <td class="remove-col">
                                                     <button class="btn-remove" onclick="removeCartItem('<%= cartItem.productId._id %>', this)"><i class="icon-close"></i></button>
@@ -167,16 +171,21 @@
                                     updateGrandTotal();
                                 });
                                 
-                                function updateTotal(input) {
+                                function updateTotal(input, maxQuantity) {
+                                    const quantity = parseInt(input.value);
+                                    if (quantity > maxQuantity) {
+                                        alert(`Sorry, only ${maxQuantity} units are available in stock.`);
+                                        input.value = maxQuantity; 
+                                    }
+
                                     const row = input.closest("tr");
                                     const price = parseFloat(row.querySelector(".price-col").innerText.replace("$", ""));
-                                    const quantity = parseInt(input.value);
                                     const total = price * quantity;
                                     row.querySelector(".total-col").innerText = "$" + total.toFixed(2);
-                                
+
                                     updateGrandTotal();
                                 }
-                                
+
                                 function updateGrandTotal() {
                                     let grandTotal = 0;
                                     document.querySelectorAll('.total-col').forEach(function(totalCol) {
@@ -205,8 +214,8 @@
                                         if (response.ok) {
                                             console.log("Item removed from cart successfully");
                                             buttonElement.closest("tr").remove();
-                                            localStorage.removeItem(`cartQuantity_${productId}`); // Remove the item's quantity from localStorage
-                                            updateGrandTotal(); // Update the grand total after removal
+                                            localStorage.removeItem(`cartQuantity_${productId}`); 
+                                            updateGrandTotal(); 
                                         } else {
                                             console.error("Failed to remove item from cart");
                                         }

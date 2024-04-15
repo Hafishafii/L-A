@@ -185,10 +185,7 @@
                             <p class="info"><strong>Delivered On:</strong> <%= order.deliveredOn.toDateString() %></p>
                         <% } %>
                         <% if (order.orderStatus.toLowerCase() !== 'cancelled') { %>
-                            <form id="cancel-order-form-<%= order._id %>" action="/cancel-order" method="POST">
-                                <input type="hidden" name="orderId" value="<%= order._id %>">
-                                <button type="button" class="cancel-order-btn">Cancel Order</button>
-                            </form>
+                            <button type="button" class="cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
                         <% } %>
                         <!-- Displaying product images and names -->                                   
                     </li>
@@ -217,7 +214,7 @@
                 <p>No orders found.</p>
             <% } %>
         </div>
-
+    
         <style>
             .pagination a, .pagination span.disabled {
                 padding: 8px 16px;
@@ -243,39 +240,47 @@
                 cursor: not-allowed;
             }
         </style>
-        
-        
     
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const cancelOrderButtons = document.querySelectorAll('.cancel-order-btn');
     
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const cancelOrderButtons = document.querySelectorAll('.cancel-order-btn');
+                cancelOrderButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const orderId = this.dataset.orderId;
     
-            cancelOrderButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const orderId = this.closest('form').querySelector('input[name="orderId"]').value;
-    
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: 'Please provide a reason for cancellation:',
-                        input: 'textarea',
-                        inputPlaceholder: 'Reason for cancellation',
-                        showCancelButton: true,
-                        confirmButtonText: 'Cancel Order',
-                        cancelButtonText: 'Cancel',
-                        preConfirm: (reason) => {
-                            if (reason) {
+                        Swal.fire({
+                            title: 'Select a reason for cancellation',
+                            html: `
+                                <form id="cancel-order-form-${orderId}" action="/cancel-order" method="POST">
+                                    <input type="hidden" name="orderId" value="${orderId}">
+                                    <select name="cancellationReason" class="swal2-select" required>
+                                        <option value="" disabled selected>Select a reason</option>
+                                        <option value="Size issue">Size issue</option>
+                                        <option value="Product quality issue">Product quality issue</option>
+                                        <option value="Received wrong product">Received wrong product</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </form>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Cancel Order',
+                            cancelButtonText: 'Cancel',
+                            preConfirm: () => {
                                 const form = document.getElementById('cancel-order-form-' + orderId);
-                                form.querySelector('textarea[name="cancellationReason"]').value = reason;
-                                form.submit();
+                                if (form) {
+                                    form.submit();
+                                }
                             }
-                        }
+                        });
                     });
                 });
             });
-        });
-    </script>
+        </script>
+    
+    
+    
     
 
                 <footer class="footer">
@@ -351,8 +356,8 @@
                         </div><!-- End .container -->
                     </div><!-- End .footer-bottom -->
                 </footer><!-- End .footer -->
-</div><!-- End .page-wrapper -->
-<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    </div><!-- End .page-wrapper -->
+            <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 
 

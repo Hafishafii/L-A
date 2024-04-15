@@ -51,45 +51,53 @@ const loadCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const productId = req.body.productId;
-    const quantity = parseInt(req.body.quantity);
-    console.log(
-      "ADDTOCART productId-----" + productId + "   quantity-----" + quantity
-    );
+    const requestedQuantity = parseInt(req.body.quantity);
 
-    if (isNaN(quantity) || quantity <= 0) {
-      res.status(400).json({ message: "Invalid quantity" });
+    console.log(`ADDTOCART productId-----${productId}   quantity-----${requestedQuantity}`);
+
+    if (isNaN(requestedQuantity) || requestedQuantity <= 0) {
+      return res.status(400).json({ message: "Invalid quantity" });
     }
 
     const userId = req.session.user_id;
-    console.log("ADDTOCART userId------" + userId);
+    console.log(`ADDTOCART userId------${userId}`);
     const user = await User.findById(userId);
 
     if (!user) {
-      res.status(404).json({ message: "user not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const existingItem = user.cart.find((item) =>
-      item.productId.equals(productId)
-    );
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (product.quantity < requestedQuantity) {
+      return res.status(400).json({ message: "Not enough stock available" });
+    }
+
+    const existingItem = user.cart.find(item => item.productId.equals(productId));
 
     if (existingItem) {
-      existingItem.quantity += quantity;
+      const totalRequestedQuantity = existingItem.quantity + requestedQuantity;
+      if (totalRequestedQuantity > product.quantity) {
+        return res.status(400).json({ message: "Not enough stock available" });
+      }
+      existingItem.quantity += requestedQuantity;
     } else {
-      user.cart.push({ productId, quantity });
-      // user.cart1.push({productId,quantity})
+      user.cart.push({ productId, quantity: requestedQuantity });
     }
 
     await user.save();
 
-    console.log("product added to cart");
-
-    //   res.redirect('/cart')
+    console.log("Product added to cart");
     res.redirect("/cart");
   } catch (error) {
-    res.redirect('/error')
-    
+    console.error("Error adding product to cart:", error);
+    res.redirect('/error');
   }
 };
+
 
 
 

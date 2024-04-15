@@ -217,15 +217,15 @@ const deleteImage = async (req, res) => {
     fs.access(imagePath, fs.constants.F_OK, (err) => {
       if (err) {
         console.error("File doesn't exist, can't delete:", imagePath);
-        return res.status(404).json({ message: "File not found" });
+        // return res.status(404).json({ message: "File not found" });
       }
 
       fs.unlink(imagePath, (err) => {
         if (err) {
           console.error("An error occurred while deleting the image:", err);
-          return res
-            .status(500)
-            .json({ message: "An error occurred while deleting the image" });
+          // return res
+          //   .status(500)
+          //   .json({ message: "An error occurred while deleting the image" });
         }
         console.log("Image deleted successfully");
         res.redirect("/admin/edit-product/" + id);

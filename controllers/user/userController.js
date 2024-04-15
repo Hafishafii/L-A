@@ -582,13 +582,12 @@ const searchResult = async (req, res) => {
 
       const query = {
           $or: [
-              { productName: { $regex: search, $options: "i" } },
-              { category: { $regex: search, $options: "i" } },
+              { productName: { $regex: search, $options: "i" } }
           ]
       };
 
       if (categoriesFilter.length > 0) {
-          query.category = { $in: categoriesFilter };
+          query.category = { $in: categoriesFilter.map(ObjectId) };
       }
 
       let sortOptions = {};
@@ -609,21 +608,20 @@ const searchResult = async (req, res) => {
           .exec();
 
       const count = await Product.find(query).countDocuments();
-
       res.render("categoryFind", {
           products: result,
           userData: userData,
           totalPages: Math.ceil(count / limit),
           page: page,
-          sortby:sortby,
+          sortby: sortby,
           categories: categories,
           search: search,
       });
   } catch (error) {
-    res.redirect('/error')
-    
+      res.redirect('/error')
   }
 };
+
 
   
 
@@ -670,6 +668,8 @@ const updatePassword = async (req, res) => {
     res.redirect('/error')
   }
 };
+
+
 
 
 
