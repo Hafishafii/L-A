@@ -92,6 +92,7 @@ admin_route.get('/block-user',userManagementController.blockOrUnblockUser)
 admin_route.post('/continue-order', orderManagementController.continueOrder)
 admin_route.get('/orders',auth.errorHandler,orderManagementController.loadOrders)
 admin_route.post('/cancelorder',orderManagementController.cancelOrder)
+admin_route.post('/change-order-status', orderManagementController.changeStatus)
 
 
 module.exports = admin_route;

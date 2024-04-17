@@ -126,11 +126,7 @@
                                                     <div class="cart-product-quantity">
                                                         <input type="number" class="form-control" value="<%= cartItem.quantity %>" min="1" max="<%= cartItem.productId.quantity %>" step="1" data-decimals="0" required onchange='updateTotal(this, <%= cartItem.productId.quantity %>)'>
                                                     </div>
-                                                </td>
-                                                <div id="outOfStockModal" style="display:none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid black; padding: 20px; z-index: 1000;">
-                                                    <p>Sorry, you can't add more units of this product to the cart as it's out of stock.</p>
-                                                    <button onclick="closeOutOfStockModal()">Close</button>
-                                                </div>                                                                                                                                       
+                                                </td>                                                                                                                                    
                                                 <td class="total-col">$<%= (cartItem.productId.salePrice * cartItem.quantity).toFixed(2) %></td>
                                                 <td class="remove-col">
                                                     <button class="btn-remove" onclick="removeCartItem('<%= cartItem.productId._id %>', this)"><i class="icon-close"></i></button>
@@ -255,6 +251,7 @@
                                         }
                                     }).catch(error => console.error('Error:', error));
                                 });
+                                
                             </script>
                                 
                             
@@ -289,7 +286,7 @@
                     </div>
                     <!-- End .container -->
                 </div>
-                <!-- End .cart -->
+                <!-- End .cart --> zz
             </div>
             <!-- End .page-content -->            
         </main><!-- End .main -->

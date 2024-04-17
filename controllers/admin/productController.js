@@ -55,38 +55,22 @@ const loadProducts = async (req, res) => {
 
 // add product
 const addProduct = async (req, res) => {
+  const { productName, brandName, description, regularPrice, salePrice, quantity, category: categoryName } = req.body;
+  const fileNames = req.files.map(file => file.filename);
+
   try {
-    console.log(req.body);
-    const fileNames = req.files.map((file) => file.filename);
-    console.log(fileNames);
+    const category = await Category.findOne({ name: categoryName });
+    if (!category) throw new Error("Category not found");
 
-    const category = await Category.findOne({ name: req.body.category });
-
-    if (!category) {
-      console.error("Category not found");
-      return res.status(404).send("Category not found");
-    }
-
-    const { productName, brandName, description, regularPrice, salePrice, quantity } = req.body;
-
-    const product = new Product({
-        productName,
-        brandName,
-        category: category._id,
-        description,
-        regularPrice,
-        salePrice,
-        quantity,
-        image: fileNames,
+    const newProduct = new Product({
+      productName, brandName, description, regularPrice, salePrice, quantity,
+      category: category._id, image: fileNames
     });
 
-
-    console.log(product);
-    const newProduct = await product.save();
+    await newProduct.save();
     res.redirect("/admin/products");
   } catch (error) {
-    res.redirect('/error')
-    
+    handleError(res, error);
   }
 };
 
@@ -217,15 +201,11 @@ const deleteImage = async (req, res) => {
     fs.access(imagePath, fs.constants.F_OK, (err) => {
       if (err) {
         console.error("File doesn't exist, can't delete:", imagePath);
-        // return res.status(404).json({ message: "File not found" });
       }
 
       fs.unlink(imagePath, (err) => {
         if (err) {
           console.error("An error occurred while deleting the image:", err);
-          // return res
-          //   .status(500)
-          //   .json({ message: "An error occurred while deleting the image" });
         }
         console.log("Image deleted successfully");
         res.redirect("/admin/edit-product/" + id);

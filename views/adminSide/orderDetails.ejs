@@ -32,58 +32,111 @@
                 </div>
             </div>
             <div class="card">
-    <header class="card-header">
-        <div class="row align-items-center">
-            <% orders.forEach(order => { %>
-                <div class="col-12 mb-15">
-                    <div>
-                        <i class="material-icons md-calendar_today"></i> <b><%= String(order.createdAt).slice(0, 16) %></b>
-                        <small class="text-muted">Order ID: <%= String(order._id).slice(-6) %></small>
-                    </div> 
-                    <div class="icontext align-items-start mt-3">
-                        <span class="icon icon-sm rounded-circle bg-primary-light">
-                            <i class="text-primary material-icons md-person"></i>
-                        </span>
-                        <div class="text">
-                            <h6 class="mb-1">Customer</h6>
-                            <p class="mb-1">
-                                <%= order.customerId.name %> <br> 
-                                <%= order.customerId.email %> <br> 
-                                <%= order.customerId.phoneNumber %>
-                            </p>
-                        </div>
-                    </div>
-                    <h6 class="mt-3">Products:</h6>
-                    <ul>
-                        <% order.products.forEach(product => { %>
-                            <li>
-                                <div class="product-info">
-                                    <span><strong><%= product.productId.productName %></strong></span> -
-                                    <span>Category: <%= product.productId.category %></span> - 
-                                    <span>Quantity: <%= product.quantity %></span> 
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <% orders.forEach(order => { %>
+                            <div class="col-12 mb-15">
+                                <!-- Order details -->
+                                <div>
+                                    <i class="material-icons md-calendar_today"></i> <b><%= String(order.createdAt).slice(0, 16) %></b>
+                                    <small class="text-muted">Order ID: <%= String(order._id).slice(-6) %></small>
+                                </div> 
+                                <div class="icontext align-items-start mt-3">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-person"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Customer</h6>
+                                        <p class="mb-1">
+                                            <%= order.customerId.name %> <br> 
+                                            <%= order.customerId.email %> <br> 
+                                            <%= order.customerId.phoneNumber %>
+                                        </p>
+                                    </div>
                                 </div>
-                            </li>
+                                <h6 class="mt-3">Products:</h6>
+                                <ul>
+                                    <% order.products.forEach(product => { %>
+                                        <li>
+                                            <div class="product-info">
+                                                <span><strong><%= product.productId.productName %></strong></span> -
+                                                <span>Category: <%= product.productId.category %></span> - 
+                                                <span>Quantity: <%= product.quantity %></span> 
+                                            </div>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                                <div>
+                                    <strong>Order Status:</strong> <%= order.orderStatus %>
+                                </div>
+                                <% if (order.orderStatus === "CANCELLED") { %>
+                                    <form action="/admin/continue-order" method="POST">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <button type="submit">Continue Order</button>
+                                    </form>
+                                <% } else if (order.orderStatus !== "DELIVERED") { %>
+                                    <form action="/admin/cancelorder" method="POST">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <button type="submit">Cancel Order</button>
+                                    </form>
+                                    <form action="/admin/change-order-status" method="POST">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <input type="hidden" name="newStatus" value="DELIVERED">
+                                        <button type="submit">Mark as Delivered</button>
+                                    </form>
+                                <% } %>   
+                                <hr>
+                            </div>
                         <% }); %>
-                    </ul>
-                    <div>
-                        <strong>Order Status:</strong> <%= order.orderStatus %>
                     </div>
-                    <% if (order.orderStatus === "CANCELLED") { %>
-                        <form action="/admin/continue-order" method="POST">
-                            <input type="hidden" name="orderId" value="<%= order._id %>">
-                            <button type="submit">Continue Order</button>
-                        </form>
-                    <% } else { %>
-                        <form action="/admin/cancelorder" method="POST">
-                            <input type="hidden" name="orderId" value="<%= order._id %>">
-                            <button type="submit">Cancel Order</button>
-                        </form>
-                    <% } %>
-                </div>
-            <% }); %>
-        </div>
-    </header> <!-- card-header end// -->
-</div> <!-- card end// -->
+                </header> <!-- card-header end// -->
+                <% if (totalPages > 1) { %>
+                    <nav aria-label="Order Pagination">
+                        <ul class="pagination justify-content-center">
+                            <% if (currentPage !== 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+                
+
+                <style>
+                    .pagination .page-link {
+                        color: black; 
+                    }
+                
+                    .pagination .page-link.active {
+                        color: #6c757d; 
+                    }
+                </style>
+                
+            </div> <!-- card end// -->            
+
+                    
+                    
+
+
+            
+            
 
                                                                                     
                                

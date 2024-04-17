@@ -9,19 +9,28 @@ const Product = require('../../model/productModel')
 //load orders
 const loadOrders = async (req, res) => {
     try {
+        const perPage = 2;
+        const page = parseInt(req.query.page) || 1; 
+
+        const totalCount = await Order.countDocuments();
+        const totalPages = Math.ceil(totalCount / perPage);
+        const skip = (page - 1) * perPage;
+
         const orders = await Order.find()
-        .populate('customerId')
-        .populate({
-            path: 'products.productId', 
-            model: 'Product' 
-        });
+            .populate('customerId')
+            .populate({
+                path: 'products.productId', 
+                model: 'Product' 
+            })
+            .skip(skip) 
+            .limit(perPage); 
 
-res.render('orderDetails', { orders: orders });
-} catch (error) {
-    res.redirect('/error')
+        res.render('orderDetails', { orders, currentPage: page, totalPages });
+    } catch (error) {
+        res.redirect('/error');
+    }
+}
 
-}
-}
 
 
 
@@ -29,32 +38,22 @@ res.render('orderDetails', { orders: orders });
 
 const changeStatus = async (req, res) => {
     try {
-        console.log(req.body.status);
-        const id = req.body.id;
-        console.log(id);
-        const order = await Order.findById(id);
-        await Order.findByIdAndUpdate(id, { orderStatus: req.body.status });
-        if(req.body.status === "DELIVERED"){
+        const id = req.body.orderId;
+        const newStatus = req.body.newStatus;
+
+        await Order.findByIdAndUpdate(id, { orderStatus: newStatus });
+
+        if (newStatus === "DELIVERED") {
             await Order.findByIdAndUpdate(id, { deliveredOn: new Date() });
-        } else if(req.body.status === "CANCELLED"){
-            if (order) {
-                for (const orderItem of order.products) {
-                    const product = await Product.findById(orderItem.productId);
-                    if (product) {
-                        product.quantity += orderItem.quantity;
-                        await product.save();
-                        console.log("quantity increased");
-                    }
-                }
-            }
         }
+
         req.flash('success', 'Order status updated successfully.');
         res.redirect('/admin/orders');
     } catch (error) {
-        res.redirect('/error')
-
+        res.redirect('/error');
     }
 };
+
 
 
 

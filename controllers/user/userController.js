@@ -489,7 +489,6 @@ const loadEditAddress = async (req, res) => {
 // edit address
 const editAddress = async (req, res) => {
   try {
-    console.log(req.body, "Bodyyyyyyyyyyyyyyyyyyyyyyyyy");
     const user = await User.findById(req.session.user_id);
     const addressId = req.params.addressid;
     console.log(addressId, "idsdsdsdsdsdsdsdsdshrgfdeg");
