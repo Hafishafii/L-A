@@ -264,14 +264,21 @@
                         <!-- End .details-filter-row -->
 
                         <div class="product-details-action">
-                          <form action="/add-to-cart" method="post">
-                              <input type="hidden" name="productId" value="<%= product._id %>">
-                              <input type="number" name="quantity" value="1" min="1" max="10" step="1">
-                              <button type="submit" class="btn-product btn-cart">
-                                  <span>add to cart</span>
+                          <% if (isAvailable) { %>
+                              <form action="/add-to-cart" method="post">
+                                  <input type="hidden" name="productId" value="<%= product._id %>">
+                                  <button type="submit" class="btn-product btn-cart">
+                                      <span>add to cart</span>
+                                  </button>
+                              </form>
+                          <% } else { %>
+                              <button class="btn-product btn-cart" style="background-color: #ccc; cursor: not-allowed;">
+                                  <span>Out of Stock</span>
                               </button>
-                          </form>
-                        </div>
+                          <% } %>
+                      </div>
+                      
+                      
                       
                           <div class="details-action-wrapper">
                             <a

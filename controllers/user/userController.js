@@ -346,20 +346,23 @@ const productView = async (req, res) => {
     const product = await Product.findById(product_id);
     const categories = await Category.find({ isListed: true });
     const user = await User.findById(req.session.user_id);
-    const userData = user?.name;
-    console.log(product);
+    const userData = user ? user.name : null;
+    const isAvailable = product.quantity > 0;  
 
+    console.log(product);
     res.render("product", {
       categories: categories,
       product: product,
       userData: userData,
       productId: product_id,
+      isAvailable: isAvailable  
     });
   } catch (error) {
-    res.redirect('/error')
-    
+    console.error('Error loading product:', error);
+    res.redirect('/error');
   }
 };
+
 
 
 
@@ -380,6 +383,13 @@ const loadAccount = async (req, res) => {
     categories: categories,
   });
 };
+
+
+
+
+
+
+
 
 const loadAddAddress = async (req, res) => {
   try {
@@ -445,6 +455,8 @@ const addAddress = async (req, res) => {
 
 
 
+
+
 // load edit address
 const loadEditAddress = async (req, res) => {
   try {
@@ -477,6 +489,8 @@ const loadEditAddress = async (req, res) => {
     
   }
 };
+
+
 
 
 
@@ -533,6 +547,9 @@ const editAddress = async (req, res) => {
 
 
 
+
+
+
 // delete address
 const deleteAddress = async (req, res) => {
   try {
@@ -557,6 +574,11 @@ const deleteAddress = async (req, res) => {
     
   }
 };
+
+
+
+
+
 
 
 
@@ -629,6 +651,7 @@ const searchResult = async (req, res) => {
 
 
 
+
 const updatePassword = async (req, res) => {
   try {
     const userId = req.session.user_id;
@@ -676,6 +699,8 @@ const updatePassword = async (req, res) => {
 
 
 
+
+
 const renderAddress = async (req, res) => {
   try {
     console.log("User ID from session:", req.session.user_id);
@@ -714,6 +739,10 @@ const renderAccountDetails= async(req,res) => {
     
   }
 }
+
+
+
+
 
 
 

@@ -58,7 +58,7 @@
                     <div class="header-right">
                         <div class="header-search">
                             <a href="#" class="search-toggle" role="button" title="Search"><i class="icon-search"></i></a>
-                            <form action="#" method="get">
+                            <form action="/search">
                                 <div class="header-search-wrapper">
                                     <label for="q" class="sr-only">Search</label>
                                     <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
@@ -110,10 +110,7 @@
                                                     <div class="product">
                                                         <figure class="product-media">
                                                             <a href="#">
-                                                                <img src="/adminassets/imgs/products/<%= cartItem.productId.image[0] %>"" alt="IMG" srcset="">
-                                                                <script>
-                                                                    alert(cartItem.productId.image[0])
-                                                                </script>
+                                                                <img src="/adminassets/imgs/products/<%= cartItem.productId.image[0] %>" alt="IMG" srcset="">
                                                             </a>
                                                         </figure>
                                                         <h3 class="product-title">
@@ -123,10 +120,14 @@
                                                 </td>
                                                 <td class="price-col">$<%= cartItem.productId.salePrice %></td>
                                                 <td class="quantity-col">
-                                                    <div class="cart-product-quantity">
-                                                        <input type="number" class="form-control" value="<%= cartItem.quantity %>" min="1" max="<%= cartItem.productId.quantity %>" step="1" data-decimals="0" required onchange='updateTotal(this, <%= cartItem.productId.quantity %>)'>
-                                                    </div>
-                                                </td>                                                                                                                                    
+                                                    <% if (cartItem.productId.quantity > 0) { %>
+                                                        <div class="cart-product-quantity">
+                                                            <input type="number" class="form-control" value="<%= cartItem.quantity %>" min="1" max="<%= cartItem.productId.quantity %>" step="1" data-decimals="0" required onchange='updateTotal(this, <%= cartItem.productId.quantity %>)'>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <span>Out of Stock</span>
+                                                    <% } %>
+                                                </td>
                                                 <td class="total-col">$<%= (cartItem.productId.salePrice * cartItem.quantity).toFixed(2) %></td>
                                                 <td class="remove-col">
                                                     <button class="btn-remove" onclick="removeCartItem('<%= cartItem.productId._id %>', this)"><i class="icon-close"></i></button>
@@ -135,7 +136,7 @@
                                         <% }); %>                                        
                                     </tbody>
                                 </table>
-                            
+                                
                                 <div class="cart-bottom">
                                     <div class="cart-discount">
                                         <form action="#">
@@ -150,142 +151,160 @@
                                     <a href="#" id="update-cart" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
                                 </div>
                             </div>
-                            
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    document.querySelectorAll('tr[data-product-id]').forEach(row => {
-                                        const productId = row.getAttribute('data-product-id');
-                                        const quantityInput = row.querySelector('.cart-product-quantity input');
-                                        const storedQuantity = localStorage.getItem(`cartQuantity_${productId}`);
-                                        
-                                        if (storedQuantity) {
-                                            quantityInput.value = storedQuantity;
-                                            updateTotal(quantityInput);
-                                        }
-                                    });
-                                
-                                    updateGrandTotal();
-                                });
-                                
-                                function updateTotal(input, maxQuantity) {
-                                    const quantity = parseInt(input.value);
-                                    if (quantity > maxQuantity) {
-                                        alert(`Sorry, only ${maxQuantity} units are available in stock.`);
-                                        input.value = maxQuantity; 
-                                    }
-
-                                    const row = input.closest("tr");
-                                    const price = parseFloat(row.querySelector(".price-col").innerText.replace("$", ""));
-                                    const total = price * quantity;
-                                    row.querySelector(".total-col").innerText = "$" + total.toFixed(2);
-
-                                    updateGrandTotal();
-                                }
-
-                                function updateGrandTotal() {
-                                    let grandTotal = 0;
-                                    document.querySelectorAll('.total-col').forEach(function(totalCol) {
-                                        grandTotal += parseFloat(totalCol.innerText.replace("$", ""));
-                                    });
-                                    document.getElementById('grandTotal').innerText = "$" + grandTotal.toFixed(2);
-                                }
-                                
-                                document.querySelectorAll('.cart-product-quantity input').forEach(input => {
-                                    input.addEventListener('change', function() {
-                                        const row = this.closest('tr');
-                                        const productId = row.getAttribute('data-product-id');
-                                        localStorage.setItem(`cartQuantity_${productId}`, this.value);
-                                        updateTotal(this);
-                                    });
-                                });
-                                
-                                function removeCartItem(productId, buttonElement) {
-                                    fetch(`/remove-cart/${productId}`, {
-                                        method: 'GET',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        }
-                                    })
-                                    .then(response => {
-                                        if (response.ok) {
-                                            console.log("Item removed from cart successfully");
-                                            buttonElement.closest("tr").remove();
-                                            localStorage.removeItem(`cartQuantity_${productId}`); 
-                                            updateGrandTotal(); 
-                                        } else {
-                                            console.error("Failed to remove item from cart");
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error("Error:", error);
-                                    });
-                                }
-                                
-                                document.getElementById('update-cart').addEventListener('click', function(event) {
-                                    event.preventDefault();
-                                
-                                    const productIds = [];
-                                    const quantities = [];
-                                
-                                    document.querySelectorAll('tr[data-product-id]').forEach(row => {
-                                        const productId = row.getAttribute('data-product-id');
-                                        const quantityInput = row.querySelector('.cart-product-quantity input');
-                                        if (productId && quantityInput) {
-                                            productIds.push(productId);
-                                            quantities.push(quantityInput.value);
-                                        }
-                                    });
-                                
-                                    fetch('/change-quantity', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ productId: productIds, quantity: quantities })
-                                    }).then(response => {
-                                        if (response.ok) {
-                                            console.log("Quantities updated successfully");
-                                            window.location.reload();
-                                        } else {
-                                            console.error("Failed to update quantities");
-                                        }
-                                    }).catch(error => console.error('Error:', error));
-                                });
-                                
-                            </script>
-                                
-                            
                             <!-- End .col-lg-9 -->
+                
                             <aside class="col-lg-3">
                                 <div class="summary summary-cart">
                                     <h3 class="summary-title">Cart Total</h3>
                                     <table class="table table-summary">
                                         <tbody>
+                                            <% let subtotal = 0; %>
+                                            <% let allItemsOutOfStock = true; %>
+                                            <% userCart.cart.forEach(function(cartItem) { %>
+                                                <% if (cartItem.productId.quantity > 0) { %>
+                                                    <% subtotal += cartItem.productId.salePrice * cartItem.quantity; %>
+                                                    <% allItemsOutOfStock = false; %>
+                                                <% } %>
+                                            <% }); %>
+                            
                                             <tr class="summary-subtotal">
                                                 <td>Subtotal:</td>
-                                                <td>$<%= grandTotal %></td>
+                                                <td>
+                                                    <% if (allItemsOutOfStock) { %>
+                                                        Out of Stock
+                                                    <% } else { %>
+                                                        $<%= subtotal.toFixed(2) %>
+                                                    <% } %>
+                                                </td>
                                             </tr>
+                                            <tr class="summary-total">
+                                                <td>Total:</td>
+                                                <td>
+                                                    <% if (allItemsOutOfStock) { %>
+                                                        Out of Stock
+                                                    <% } else { %>
+                                                        $<%= subtotal.toFixed(2) %> 
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                            
                                             <tr class="summary-shipping">
                                                 <td>Shipping:</td>
                                                 <td>&nbsp;</td>
                                             </tr>
-                                            <!-- Add shipping options here -->
-                                            <tr class="summary-total">
-                                                <td>Total:</td>
-                                                <td id="grandTotal">$0.00</td>
-                                            </tr>                                            
                                         </tbody>
                                     </table>
-                                    <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+                                    <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block <% if (allItemsOutOfStock) { %>disabled<% } %>">PROCEED TO CHECKOUT</a>
                                 </div>
-                                <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
-                            </aside>
+                            </aside>                            
                             <!-- End .col-lg-3 -->
                         </div>
                         <!-- End .row -->
                     </div>
                     <!-- End .container -->
                 </div>
+                
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        document.querySelectorAll('tr[data-product-id]').forEach(row => {
+                            const productId = row.getAttribute('data-product-id');
+                            const quantityInput = row.querySelector('.cart-product-quantity input');
+                            const storedQuantity = localStorage.getItem(`cartQuantity_${productId}`);
+                            
+                            if (storedQuantity) {
+                                quantityInput.value = storedQuantity;
+                                updateTotal(quantityInput);
+                            }
+                        });
+                    
+                        updateGrandTotal();
+                    });
+                    
+                    function updateTotal(input, maxQuantity) {
+                        const quantity = parseInt(input.value);
+                        if (quantity > maxQuantity) {
+                            alert(`Sorry, only ${maxQuantity} units are available in stock.`);
+                            input.value = maxQuantity; 
+                        }
+                
+                        const row = input.closest("tr");
+                        const price = parseFloat(row.querySelector(".price-col").innerText.replace("$", ""));
+                        const total = price * quantity;
+                        row.querySelector(".total-col").innerText = "$" + total.toFixed(2);
+                
+                        updateGrandTotal();
+                    }
+                
+                    function updateGrandTotal() {
+                        let grandTotal = 0;
+                        document.querySelectorAll('.total-col').forEach(function(totalCol) {
+                            grandTotal += parseFloat(totalCol.innerText.replace("$", ""));
+                        });
+                        document.getElementById('grandTotal').innerText = "$" + grandTotal.toFixed(2);
+                    }
+                    
+                    document.querySelectorAll('.cart-product-quantity input').forEach(input => {
+                        input.addEventListener('change', function() {
+                            const row = this.closest('tr');
+                            const productId = row.getAttribute('data-product-id');
+                            localStorage.setItem(`cartQuantity_${productId}`, this.value);
+                            updateTotal(this);
+                        });
+                    });
+                    
+                    function removeCartItem(productId, buttonElement) {
+                        fetch(`/remove-cart/${productId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log("Item removed from cart successfully");
+                                buttonElement.closest("tr").remove();
+                                localStorage.removeItem(`cartQuantity_${productId}`); 
+                                updateGrandTotal(); 
+                            } else {
+                                console.error("Failed to remove item from cart");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                    }
+                    
+                    document.getElementById('update-cart').addEventListener('click', function(event) {
+                        event.preventDefault();
+                    
+                        const productIds = [];
+                        const quantities = [];
+                    
+                        document.querySelectorAll('tr[data-product-id]').forEach(row => {
+                            const productId = row.getAttribute('data-product-id');
+                            const quantityInput = row.querySelector('.cart-product-quantity input');
+                            if (productId && quantityInput) {
+                                productIds.push(productId);
+                                quantities.push(quantityInput.value);
+                            }
+                        });
+                    
+                        fetch('/change-quantity', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ productId: productIds, quantity: quantities })
+                        }).then(response => {
+                            if (response.ok) {
+                                console.log("Quantities updated successfully");
+                                window.location.reload();
+                            } else {
+                                console.error("Failed to update quantities");
+                            }
+                        }).catch(error => console.error('Error:', error));
+                    });
+                </script>                
                 <!-- End .cart --> zz
             </div>
             <!-- End .page-content -->            

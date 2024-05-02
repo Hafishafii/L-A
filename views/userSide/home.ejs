@@ -128,17 +128,15 @@
                                     <i class="icon-heart-o"></i>
                                     <!-- <span class="wishlist-count badge">3</span> -->
                                 </div>
-                                <p>Wishlist</p>
                             </a>
                         </div><!-- End .compare-dropdown -->
 
                         <div class="dropdown cart-dropdown">
-                            <a href="/cart" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <!-- <a href="" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"> -->
                                 <div class="icon">
-                                    <i class="icon-shopping-cart"></i>
+                                    <a href="/cart" class="dropdown-toggle mt-7"><i class="icon-shopping-cart"></i></a>
                                 </div>
-                                <p>Cart</p>
-                            </a>
+                            <!-- </a> -->
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->
@@ -260,53 +258,81 @@
                 </ul>
                 
                 <style>
+                    .out-of-stock-overlay {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 24px;
+                        color: white;
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        z-index: 10;
+                        text-align: center;
+                        width: 80%; 
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+                        border: 1px solid rgba(255,255,255,0.2);
+                        font-family: 'Arial', sans-serif; 
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+
                     .product-image {
-                        height: 300px; /* Set the desired height for the product images */
-                        object-fit: cover; /* Ensure the entire image is visible */
+                        height: 300px;
+                        object-fit: cover;
+                        width: 100%; 
+                    }
+
+                    .blur-image {
+                        filter: blur(4px);
+                        opacity: 0.6;
+                    }
+
+                    .product-media {
+                        position: relative;
+                        overflow: hidden; 
+                        display: block;
+                        width: 100%; 
                     }
                 </style>
                 <div class="container">
                     <div class="row">
-                        <% for(let i=0; i<products.length; i++) { %>
+                        <% for(let i = 0; i < products.length; i++) { %>
                             <div class="col-4">
                                 <div class="product product-2">
                                     <figure class="product-media">
-                                        <!-- Your existing code for product image -->
                                         <a href="/productview?productid=<%= products[i]._id %>">
-                                            <img src="/adminassets/imgs/products/<%= products[i].image[0] %>" alt="Product image" class="product-image">
+                                            <img src="/adminassets/imgs/products/<%= products[i].image[0] %>" alt="Product image" class="<%= products[i].quantity === 0 ? 'blur-image' : '' %> product-image">
                                         </a>
-        
-                        <div class="product-action-vertical">
-                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                        </div><!-- End .product-action -->
-        
-                        <div class="product-action product-action-dark">
-                            <a href="#" class="btn-product btn-cart" title="Add to cart"><span>add to cart</span></a>
-                            <a href="#" class="btn-product btn-quickview" title=" view"><span> view</span></a>
-                        </div><!-- End .product-action -->
-                    </figure><!-- End .product-media -->
-        
-                    <div class="product-body">
-                        <div class="product-cat">
-                            <a href="#"><%=products[i]?.category%></a>
-                        </div><!-- End .product-cat -->
-                        <h3 class="product-title"><a href="#"><%=products[i]?.productName%></a></h3><!-- End .product-title -->
-                        <div class="product-price">
-                            <span class="new-price">$<%=products[i]?.salePrice%></span>
-                            <span class="old-price">Was $<%=products[i]?.regularPrice%></span>
-                        </div><!-- End .product-price -->
-                        <div class="ratings-container">
-                            <div class="ratings">
-                                <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                            </div><!-- End .ratings -->
-                            <span class="ratings-text">( 5 Reviews )</span>
-                        </div><!-- End .rating-container -->
+                
+                                        <% if (products[i].quantity === 0) { %> 
+                                            <div class="out-of-stock-overlay">Out of Stock</div>
+                                        <% } %>
+                                    </figure>
+                
+                                    <div class="product-body">
+                                        <div class="product-cat">
+                                            <a href="#"><%= products[i]?.category %></a>
+                                        </div>
+                                        <h3 class="product-title"><a href="#"><%= products[i]?.productName %></a></h3>
+                                        <div class="product-price">
+                                            <span class="new-price">$<%= products[i]?.salePrice %></span>
+                                            <span class="old-price">Was $<%= products[i]?.regularPrice %></span>
+                                        </div>
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val" style="width: 80%;"></div>
+                                            </div>
+                                            <span class="ratings-text">( 5 Reviews )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
-            </div>
-    <%}%>
-</div>
-            </div><!-- End .container -->
+                
 
             <div class="mb-7 mb-lg-11"></div><!-- End .mb-7 -->
 
@@ -766,6 +792,11 @@
         {
             
         }
+        function addToCart(productId) {
+            var addToCartUrl = "/add-to-cart/" + productId;
+            window.location.href = addToCartUrl;
+        }
+
     </script>
 
 

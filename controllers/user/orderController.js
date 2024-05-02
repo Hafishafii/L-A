@@ -109,8 +109,12 @@ const checkout = async (req, res) => {
     await user.save();
 
     for (const cartItem of order.products) {
-      await Product.findByIdAndUpdate(cartItem.productId, { $inc: { quantity: -cartItem.quantity } });
-      console.log("Updated product stock for:", cartItem.productId);
+      const updateResult = await Product.findByIdAndUpdate(cartItem.productId, { $inc: { quantity: -cartItem.quantity } }).exec();
+      if (!updateResult) {
+        console.error("Failed to update product stock for:", cartItem.productId);
+        continue; 
+      }
+      console.log("Updated product stock for:", cartItem.productId, " New Stock:", updateResult.quantity - cartItem.quantity);
     }
 
     return res.render('successPage', { orderId: order._id });
@@ -119,10 +123,6 @@ const checkout = async (req, res) => {
     res.status(500).redirect('/error');
   }
 };
-
-
-
-
 
 
 
@@ -178,9 +178,6 @@ const cancelOrder = async (req, res) => {
     res.status(500).redirect('/error');
   }
 };
-
-
-
 
 
 

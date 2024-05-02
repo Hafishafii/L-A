@@ -10,7 +10,7 @@ const loadLogin=async (req,res)=> {
     }
     catch(error) {
         console.log(error.message);
-        res.redirect('/error')
+        res.status(500).res.redirect('/error')
         // res.status(500).send("Internal Server Error");
     }
 }

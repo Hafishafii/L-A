@@ -51,13 +51,6 @@ const loadCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const productId = req.body.productId;
-    const requestedQuantity = parseInt(req.body.quantity);
-
-    console.log(`ADDTOCART productId-----${productId}   quantity-----${requestedQuantity}`);
-
-    if (isNaN(requestedQuantity) || requestedQuantity <= 0) {
-      return res.status(400).json({ message: "Invalid quantity" });
-    }
 
     const userId = req.session.user_id;
     console.log(`ADDTOCART userId------${userId}`);
@@ -72,20 +65,16 @@ const addToCart = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    if (product.quantity < requestedQuantity) {
-      return res.status(400).json({ message: "Not enough stock available" });
+    if (product.quantity === 0) {
+      return res.status(400).json({ message: "Product out of stock" });
     }
 
     const existingItem = user.cart.find(item => item.productId.equals(productId));
 
     if (existingItem) {
-      const totalRequestedQuantity = existingItem.quantity + requestedQuantity;
-      if (totalRequestedQuantity > product.quantity) {
-        return res.status(400).json({ message: "Not enough stock available" });
-      }
-      existingItem.quantity += requestedQuantity;
+      existingItem.quantity++;
     } else {
-      user.cart.push({ productId, quantity: requestedQuantity });
+      user.cart.push({ productId, quantity: 1 });
     }
 
     await user.save();
@@ -97,6 +86,7 @@ const addToCart = async (req, res) => {
     res.redirect('/error');
   }
 };
+
 
 
 

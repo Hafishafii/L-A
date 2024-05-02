@@ -128,7 +128,7 @@ const editProduct = async (req, res) => {
       regularPrice: req.body.regularPrice,
       salePrice: req.body.salePrice,
       quantity: quantity,
-      isListed: req.body.isListed === 'on', 
+      isListed: req.body.isListed,
       image: imgArr,
     };
 
