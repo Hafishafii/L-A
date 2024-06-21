@@ -39,7 +39,7 @@ user_route.get('/account-details',auth.isLogIn,userController.renderAccountDetai
 
 user_route.get('/cart',auth.isLogIn,cartController.loadCart)
 user_route.post('/add-to-cart',auth.isLogIn,cartController.addToCart)
-user_route.post('/change-quantity', cartController.changeQuantity)
+user_route.post('/change-quantity', cartController.changeQuantity);
 user_route.get('/remove-cart/:id', cartController.deleteCartItem)
 user_route.get('/checkout',auth.isLogIn, cartController.loadCheckout)
 

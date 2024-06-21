@@ -165,7 +165,7 @@
                         <nav class="main-nav">
                             <ul class="menu sf-arrows">
                                 <li class="megamenu-container active">
-                                    <a href="index.html" class="sf-with-ul">Home</a>
+                                    <a href="index.html" >Home</a>
                                 <li>
                                     <a href="category.html" class="sf-with-ul">Shop</a>
 
@@ -198,7 +198,7 @@
 
                                     <ul>
                                         <li>
-                                            <a href="about.html" class="sf-with-ul">About</a>
+                                            <a href="about.html" >About</a>
 
                                             <ul>
                                                 <li><a href="about.html">About 01</a></li>
@@ -315,7 +315,7 @@
                                         <div class="product-cat">
                                             <a href="#"><%= products[i]?.category %></a>
                                         </div>
-                                        <h3 class="product-title"><a href="#"><%= products[i]?.productName %></a></h3>
+                                        <h3 class="product-title"><a href="/productview?productid=<%= products[i]._id %>"><%= products[i]?.productName %></a></h3>
                                         <div class="product-price">
                                             <span class="new-price">$<%= products[i]?.salePrice %></span>
                                             <span class="old-price">Was $<%= products[i]?.regularPrice %></span>
@@ -436,12 +436,10 @@
                 </div><!-- End .cta -->
             </div><!-- End .container -->
         </main><!-- End .main -->
-
-        
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu -->                 
     <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
 
     <div class="mobile-menu-container">
@@ -554,7 +552,6 @@
                             </li>
                             <li>
                                 <a href="blog.html">Blog</a>
-
                                 <ul>
                                     <li><a href="blog.html">Classic</a></li>
                                     <li><a href="blog-listing.html">Listing</a></li>

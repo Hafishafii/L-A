@@ -1,87 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Success Page</title>
-  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
-  <style>
-    body {
-      text-align: center;
-      padding: 40px 0;
-      background: #EBF0F5;
-    }
-    h1 {
-      color: #f9ff53;
-      font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-      font-weight: 900;
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-    p {
-      color: #e2ff6d;
-      font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-      font-size: 20px;
-      margin: 0;
-    }
-    i {
-      color: #d9ff66;
-      font-size: 100px;
-      line-height: 200px;
-      margin-left: -15px;
-    }
-    .card {
-      background: white;
-      padding: 60px;
-      border-radius: 4px;
-      box-shadow: 0 2px 3px #C8D0D8;
-      display: inline-block;
-      margin: 0 auto;
-    }
-    .button, .a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #ebff53;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
-      margin-right: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div style="border-radius: 200px; height: 200px; width: 200px; background: #F8FAF5; margin: 0 auto;">
-      <i class="checkmark">✓</i>
-    </div>
-    <h1>Success</h1>
-    <p>We received your purchase request;<br/> we'll be in touch shortly!</p>
-    <a href="/"><button class="button">Continue Shopping</button></a>
-    <form id="cancelOrderForm" action="/cancel-order" method="POST" style="display: inline-block;">
-      <input type="hidden" name="orderId" value="<%= orderId %>">
-      <button type="button" id="cancelOrderButton" class="button">Cancel Order</button>
-    </form>      
-  </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Success Page</title>
+        <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
 
-  <script>
-    document.getElementById("cancelOrderButton").addEventListener("click", function() {
-      swal({
-        title: "Are you sure?",
-        text: "Once canceled, you will not be able to recover this order!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      })
-      .then((willCancel) => {
-        if (willCancel) {
-          document.getElementById("cancelOrderForm").submit();
-        }
-      });
-    });
-  </script>
-</body>
+            .card {
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                text-align: center;
+            }
+
+            .checkmark {
+                font-size: 60px;
+                color: #4CAF50;
+            }
+
+            h1 {
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+
+            p {
+                margin-bottom: 20px;
+            }
+
+            .button {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+
+           
+            #cancelOrderButton {
+                display: block;
+                margin: 20px auto;
+            }
+
+            
+            #cancelOrderForm {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            #cancellationReason {
+                margin-right: 10px;
+                padding: 10px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+
+            #submitCancelOrder {
+                background-color: #FF5722;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+        </style>
+    </head>
+
+    <body>
+    <div class="card">
+        <div style="border-radius: 200px; height: 200px; width: 200px; background: #F8FAF5; margin: 0 auto;">
+            <i class="checkmark">✓</i>
+        </div>
+        <h1>Success</h1>
+        <p>We received your purchase request;<br /> we'll be in touch shortly!</p>
+        <a href="/"><button class="button">Continue Shopping</button></a>
+        <form id="cancelOrderForm" action="/cancel-order" method="POST" style="display: none;">
+            <input type="hidden" name="orderId" value="<%= orderId %>">
+            <select id="cancellationReason" name="cancellationReason" required>
+                <option value="" disabled selected>Select a reason</option>
+                <option value="Size issue">Size issue</option>
+                <option value="Product quality issue">Product quality issue</option>
+                <option value="Received wrong product">Received wrong product</option>
+                <option value="Other">Other</option>
+            </select>
+            <button type="submit" id="submitCancelOrder" class="button">Confirm Cancellation</button>
+        </form>
+        <button type="button" id="cancelOrderButton" class="button">Cancel Order</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById("cancelOrderButton").addEventListener("click", function () {
+            document.getElementById("cancelOrderForm").style.display = "block";
+            this.style.display = "none";
+        });
+
+        document.getElementById("submitCancelOrder").addEventListener("click", function (event) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Once canceled, you will not be able to recover this order!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willCancel) => {
+                if (willCancel.isConfirmed) {
+                    document.getElementById("cancelOrderForm").submit();
+                }
+            });
+        });
+    </script>
+    </body>
 </html>

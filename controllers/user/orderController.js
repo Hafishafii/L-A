@@ -61,7 +61,6 @@ const checkout = async (req, res) => {
         message: "User not authenticated",
       });
     }
-
     const user = await User.findById(userId);
     if (!user || !user.cart || user.cart.length === 0) {
       return res.status(400).json({
@@ -69,7 +68,6 @@ const checkout = async (req, res) => {
         message: "User or user's cart not found",
       });
     }
-
     const selectedAddressIndex = parseInt(req.body['selected-address-index'], 10);
     if (isNaN(selectedAddressIndex) || selectedAddressIndex < 0 || selectedAddressIndex >= user.address.length) {
       return res.status(400).json({
@@ -78,19 +76,19 @@ const checkout = async (req, res) => {
       });
     }
     const selectedAddress = user.address[selectedAddressIndex];
-
     const productsOutOfStock = [];
     for (const cartItem of user.cart) {
       const product = await Product.findById(cartItem.productId).exec();
       if (!product || product.quantity < cartItem.quantity) {
         productsOutOfStock.push(cartItem.productId);
+      } else {
+        await Product.findByIdAndUpdate(cartItem.productId, { $inc: { quantity: -cartItem.quantity } });
+        console.log("Updated product stock for:", cartItem.productId);
       }
     }
-
     if (productsOutOfStock.length > 0) {
       return res.status(400).render('orderFailure', { productsOutOfStock });
     }
-
     const order = new Order({
       customerId: userId,
       products: user.cart,
@@ -99,31 +97,19 @@ const checkout = async (req, res) => {
       paymentDetails: 'COD',
       orderStatus: "PLACED"
     });
-
     const orderSuccess = await order.save();
     if (!orderSuccess) {
       throw new Error("Failed to save order");
     }
-
     user.cart = [];
     await user.save();
-
-    for (const cartItem of order.products) {
-      const updateResult = await Product.findByIdAndUpdate(cartItem.productId, { $inc: { quantity: -cartItem.quantity } }).exec();
-      if (!updateResult) {
-        console.error("Failed to update product stock for:", cartItem.productId);
-        continue; 
-      }
-      console.log("Updated product stock for:", cartItem.productId, " New Stock:", updateResult.quantity - cartItem.quantity);
-    }
 
     return res.render('successPage', { orderId: order._id });
   } catch (error) {
     console.error("Checkout Error:", error);
     res.status(500).redirect('/error');
   }
-};
-
+}
 
 
 
@@ -143,7 +129,6 @@ const showOrders = async (req, res) => {
     
   }
 };
-
 
 
 
@@ -204,6 +189,7 @@ const orderSuccess = async (req, res) => {
     
   }
 };
+
 
 
 

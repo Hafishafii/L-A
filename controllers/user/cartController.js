@@ -2,7 +2,6 @@ const User = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Order = require("../../model/orderModel");
-// const Coupon = require("../../model/couponModel");
 
 
 
@@ -46,12 +45,10 @@ const loadCart = async (req, res) => {
 
 
 
-
 //add to cart
 const addToCart = async (req, res) => {
   try {
     const productId = req.body.productId;
-
     const userId = req.session.user_id;
     console.log(`ADDTOCART userId------${userId}`);
     const user = await User.findById(userId);
@@ -72,7 +69,8 @@ const addToCart = async (req, res) => {
     const existingItem = user.cart.find(item => item.productId.equals(productId));
 
     if (existingItem) {
-      existingItem.quantity++;
+      console.log("Product already in cart, redirecting to cart");
+      return res.redirect("/cart");
     } else {
       user.cart.push({ productId, quantity: 1 });
     }
@@ -99,28 +97,42 @@ const addToCart = async (req, res) => {
 
 // change quantity in cart
 const changeQuantity = async (req, res) => {
-  try {
-      const { productId, quantity } = req.body;
+    try {
+        const { productId, count } = req.body;
+        const quantityChange = parseInt(count, 10);
 
-      for (let i = 0; i < productId.length; i++) {
-          await User.updateOne(
-              {
-                  _id: req.session.user_id,
-                  "cart.productId": productId[i],
-              },
-              {
-                  $set: {
-                      "cart.$.quantity": parseInt(quantity[i]),
-                  },
-              }
-          );
-      }
-      res.redirect('/cart');
-  } catch (error) {
-    res.redirect('/error')
-    
-  }
+        if (isNaN(quantityChange) || quantityChange === 0) {
+            return res.status(400).json({ message: "Invalid quantity change provided." });
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const userCart = await User.findOne({ _id: req.session.user_id });
+        const cartItem = userCart.cart.find(item => item.productId.toString() === productId);
+
+        if (!cartItem) {
+            return res.status(404).json({ message: "Cart item not found" });
+        }
+
+        const newQuantity = cartItem.quantity + quantityChange;
+        if (newQuantity < 1 || newQuantity > product.quantity) {
+            return res.status(400).json({ message: "Invalid quantity requested" });
+        }
+
+        cartItem.quantity = newQuantity;
+        await userCart.save();
+
+        res.status(200).json({ message: "Cart updated successfully", cart: userCart.cart });
+    } catch (error) {
+        console.error("Error updating cart quantity:", error);
+        res.status(500).json({ message: "Error updating quantity" });
+    }
 };
+
+
 
 
 
@@ -166,7 +178,6 @@ const deleteCartItem = async (req, res) => {
 
 
 
-
 //load checkout
 const calculateTotal = (cart) => {
   let total = 0;
@@ -175,6 +186,13 @@ const calculateTotal = (cart) => {
   });
   return total;
 };
+
+
+
+
+
+
+
 
 const loadCheckout = async (req, res) => {
   try {

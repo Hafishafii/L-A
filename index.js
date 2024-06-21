@@ -27,8 +27,10 @@ app.set('view engine','ejs');
 app.use('/assets',express.static(path.resolve(__dirname,"public/assets")))
 app.use('/adminassets',express.static(path.resolve(__dirname,"public/admin-assets")))
 
-app.use(session({secret:process.env.session_key,resave:false,saveUninitialized:false, cookie:{
-    maxAge: 86400000,
+app.use(session({
+    secret:process.env.session_key,
+    resave:false,saveUninitialized:false,
+    cookie:{maxAge: 86400000,
 }}))
 
 

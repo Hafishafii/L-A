@@ -18,6 +18,9 @@ const loadLogin=async (req,res)=> {
 
 
 
+
+
+
 const adminLogin=async (req,res)=> {
     try {
         console.log(req.body);
@@ -50,6 +53,12 @@ const adminLogin=async (req,res)=> {
 }
 
 
+
+
+
+
+
+
 const logOut=async (req, res)=> {
     try {
       console.log('Haiii');
@@ -61,6 +70,13 @@ const logOut=async (req, res)=> {
 
     }
   };
+
+
+
+
+
+
+
   
   const loadDashboard=async (req, res)=> {
     try {

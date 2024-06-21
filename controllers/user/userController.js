@@ -89,7 +89,6 @@ const sendMail = async (req, res) => {
 
 
 
-
 //  resend OTP
 const resendOTP = async (req, res) => {
   try {
@@ -124,8 +123,6 @@ const resendOTP = async (req, res) => {
     
   }
 };
-
-
 
 
 
@@ -185,7 +182,6 @@ const verifyotp = async (req, res) => {
 
 
 
-
 const loadRegister = async (req, res) => {
   try {
     res.render("login");
@@ -194,7 +190,6 @@ const loadRegister = async (req, res) => {
     
   }
 };
-
 
 
 
@@ -273,7 +268,7 @@ const userLogOut = async (req, res) => {
   try {
     const userSession = req.session.user;
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/");
   } catch (error) {
     res.redirect('/error')
     
@@ -313,7 +308,6 @@ const loadHome = async (req, res) => {
     
   }
 };
-
 
 
 
@@ -372,7 +366,6 @@ const productView = async (req, res) => {
 
 
 
-
 //  load user account page
 const loadAccount = async (req, res) => {
   const userData = await User.findById(req.session.user_id);
@@ -383,6 +376,7 @@ const loadAccount = async (req, res) => {
     categories: categories,
   });
 };
+
 
 
 
@@ -585,20 +579,16 @@ const deleteAddress = async (req, res) => {
 
 
 
-
+//  search
 const searchResult = async (req, res) => {
   try {
-      const userData = await User.findById(req.session.user_id);
+      const { user_id: userId } = req.session;
+      const userData = await User.findById(userId);
       const categories = await Category.find();
 
-      const search = req.query.search;
-      const sortby = req.query.sortby;
-      const categoriesFilter = req.query.categories || [];
+      const { search, sortby, categories: categoriesFilter = [] } = req.query;
 
-      var page = 1;
-      if (req.query.page) {
-          page = req.query.page;
-      }
+      let { page = 1 } = req.query;
       const limit = 3;
 
       const query = {
@@ -612,14 +602,29 @@ const searchResult = async (req, res) => {
       }
 
       let sortOptions = {};
-      if (sortby === 'ascend') {
+
+      switch (sortby) {
+        case 'ascend':
           sortOptions = { productName: 1 };
-      } else if (sortby === 'descend') {
+          break;
+        case 'descend':
           sortOptions = { productName: -1 };
-      } else if (sortby === 'pricelh') {
+          break;
+        case 'pricelh':
           sortOptions = { salePrice: 1 };
-      } else if (sortby === 'pricehl') {
+          break;
+        case 'pricehl':
           sortOptions = { salePrice: -1 };
+          break;
+        case 'new':
+          sortOptions = { createdAt: -1 };
+          break;
+        case 'popularity':
+          sortOptions = { views: -1 };
+          break;
+        default:
+          sortOptions = { productName: 1 };
+          break;
       }
 
       const result = await Product.find(query)
@@ -631,17 +636,20 @@ const searchResult = async (req, res) => {
       const count = await Product.find(query).countDocuments();
       res.render("categoryFind", {
           products: result,
-          userData: userData,
+          userData,
           totalPages: Math.ceil(count / limit),
-          page: page,
-          sortby: sortby,
-          categories: categories,
-          search: search,
+          page,
+          sortby,
+          categories,
+          search,
       });
-  } catch (error) {
+  } catch(error) {
       res.redirect('/error')
   }
 };
+
+
+
 
 
   
@@ -651,7 +659,7 @@ const searchResult = async (req, res) => {
 
 
 
-
+//  password update
 const updatePassword = async (req, res) => {
   try {
     const userId = req.session.user_id;
@@ -700,7 +708,7 @@ const updatePassword = async (req, res) => {
 
 
 
-
+//  loadAddress
 const renderAddress = async (req, res) => {
   try {
     console.log("User ID from session:", req.session.user_id);
@@ -730,6 +738,9 @@ const renderAddress = async (req, res) => {
 
 
 
+
+
+//  load account 
 const renderAccountDetails= async(req,res) => {
   try {
     const userData = await User.findById(req.session.user_id);
@@ -746,7 +757,7 @@ const renderAccountDetails= async(req,res) => {
 
 
 
-
+//  errorpage
 const errorPage = (req, res) => {
   try {
       res.render('errorPage');
@@ -755,6 +766,12 @@ const errorPage = (req, res) => {
     
   }
 };
+
+
+
+
+
+
 
 
 

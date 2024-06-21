@@ -185,10 +185,10 @@
                             <aside class="col-lg-3 order-lg-first">
                                 <form class="form-inline align-items-center" action="/search">
                                     <div class="form-group mb-0">
-                                        <input type="search" class="form-control" name="search"value =<%=search%> id="q" placeholder="Search product ..." required style="border:2px; border-radius: 10px; margin-bottom: 5px; height: 40px;">
+                                        <input type="search" class="form-control" name="search" value="<%=search%>" id="q" placeholder="Search product ..." required style="border:2px; border-radius: 10px; margin-bottom: 5px; height: 40px;">
                                     </div><!-- End .form-group -->
                                 </form>
-
+                            
                                 <div class="toolbox">
                                     <div class="toolbox-left">
                                         <div class="toolbox-sort">
@@ -200,11 +200,9 @@
                                                     <option value="pricelh" <% if (sortby === 'pricelh') { %>selected="selected"<% } %>>Price low- Price High</option>
                                                     <option value="pricehl" <% if (sortby === 'pricehl') { %>selected="selected"<% } %>>Price High- Price Low</option>
                                                     <option value="new" <% if (sortby === 'new') { %>selected="selected"<% } %>>New Arrivals</option>
-                                                    <option value="featured" <% if (sortby === 'featured') { %>selected="selected"<% } %>>Featured</option>
                                                     <option value="popularity" <% if (sortby === 'popularity') { %>selected="selected"<% } %>>Popularity</option>
                                                 </select>                                                
                                             </div>
-                                            
                                         </div><!-- End .toolbox-sort -->
                                         <div class="toolbox-layout">
                                             <!-- Your layout buttons here -->
@@ -239,50 +237,51 @@
                                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                                     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.7.0/nouislider.min.js"></script>
                                     <script>
-                                    $(document).ready(function() {
-                                        function fetchProducts() {
-                                            var search = $('#q').val().trim();
-                                            var sortby = $('#sortby').val();
-                                            var categories = [];
-
-                                            $('input[type="checkbox"]:checked').each(function() {
-                                                categories.push($(this).attr('id').replace('cat-', ''));
+                                        $(document).ready(function() {
+                                            function fetchProducts() {
+                                                var search = $('#q').val().trim();
+                                                var sortby = $('#sortby').val();
+                                                var categories = [];
+                                
+                                                $('input[type="checkbox"]:checked').each(function() {
+                                                    categories.push($(this).attr('id').replace('cat-', ''));
+                                                });
+                                
+                                                $.ajax({
+                                                    url: '/search',
+                                                    method: 'GET',
+                                                    data: {
+                                                        search: search,
+                                                        sortby: sortby,
+                                                        categories: categories
+                                                    },
+                                                    success: function(response) {
+                                                        $('.products-container').html(response);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        console.error(error);
+                                                    }
+                                                });
+                                            }
+                                
+                                            $('#q').on('input', function() {
+                                                fetchProducts();
                                             });
-
-                                            $.ajax({
-                                                url: '/search',
-                                                method: 'GET',
-                                                data: {
-                                                    search: search,
-                                                    sortby: sortby,
-                                                    categories: categories
-                                                },
-                                                success: function(response) {
-                                                    $('.products-container').html(response);
-                                                },
-                                                error: function(xhr, status, error) {
-                                                    console.error(error);
-                                                }
+                                
+                                            $('#sortby').change(function() {
+                                                fetchProducts();
                                             });
-                                        }
-
-                                        $('#q').on('input', function() {
+                                
+                                            $('input[type="checkbox"]').change(function() {
+                                                fetchProducts();
+                                            });
+                                
                                             fetchProducts();
                                         });
-
-                                        $('#sortby').change(function() {
-                                            fetchProducts();
-                                        });
-
-                                        $('input[type="checkbox"]').change(function() {
-                                            fetchProducts();
-                                        });
-
-                                        fetchProducts();
-                                    });
                                     </script>                         
                                 </div><!-- End .sidebar sidebar-shop -->
                             </aside><!-- End .col-lg-3 -->
+                            
                         </div><!-- End .row -->
                     </div><!-- End .container -->
                 </div><!-- End .page-content -->
