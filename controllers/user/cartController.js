@@ -94,7 +94,6 @@ const addToCart = async (req, res) => {
 
 
 
-
 // change quantity in cart
 const changeQuantity = async (req, res) => {
     try {
