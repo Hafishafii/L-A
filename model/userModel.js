@@ -1,78 +1,57 @@
-const mongoose=require('mongoose');
-const moment=require('moment-timezone');
+const mongoose = require('mongoose');
+const moment = require('moment-timezone');
 
+const addressSchema = new mongoose.Schema({
+    name: String,
+    addressLine1: String,
+    addressLine2: String,
+    city: String,
+    state: String,
+    pinCode: String,
+    phone: String,
+    email: String,
+    addressType: String
+});
 
-const addressSchema=new mongoose.Schema({
-    name:{
-        type:String
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
     },
-    addressLine1:{
-        type:String
+    email: {
+        type: String,
+        required: true
     },
-    addressLine2:{
-        type:String
+    phoneNumber: {
+        type: String,
+        required: true
     },
-    city:{
-        type:String
+    password: {
+        type: String,
+        required: true
     },
-    state:{
-        type:String
+    isAdmin: {
+        type: Number,
+        required: true
     },
-    pinCode:{
-        type:String
+    isActive: {
+        type: Boolean,
+        default: true
     },
-    phone:{
-        type:String
-    },
-    email:{
-        type:String
-    },
-    addressType:{
-        type:String
-    }
-})
-
-
-
-
-const userSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true
-    },
-    phoneNumber:{
-        type:String,
-        required:true
-    },
-    password:{
-        type:String,
-        required:true
-    },
-    isAdmin:{
-        type:Number,
-        required:true
-    },
-    isActive:{
-        type:Boolean,
-        default:true
-    },
-    cart : [{
+    cart: [{
         productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product', 
-        },     
-        quantity: Number,  
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+        },
+        quantity: Number,
     }],
- 
+    wishlist: [{
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+        }
+    }],
     address: [addressSchema]
-})
+});
 
-
-
-
-
-module.exports=mongoose.model('User',userSchema);
+module.exports = mongoose.model('User', userSchema);

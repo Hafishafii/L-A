@@ -123,7 +123,7 @@
                                <!-- End .compare-dropdown --> 
 
                         <div class="wishlist">
-                            <a href="wishlist.html" title="Wishlist">
+                            <a href="/whishlist" title="Wishlist">
                                 <div class="icon">
                                     <i class="icon-heart-o"></i>
                                     <!-- <span class="wishlist-count badge">3</span> -->
@@ -180,7 +180,7 @@
                                                             <ul>
                                                                 <li><a href="/cart">Cart</a></li>
                                                                 <li><a href="/checkout">Checkout</a></li>
-                                                                <li><a href="wishlist.html">Wishlist</a></li>
+                                                                <li><a href="/whishlist">Wishlist</a></li>
                                                                 <li><a href="/account">My Account</a></li>
                                                             </ul>
                                                         </div><!-- End .col-md-6 -->
@@ -309,6 +309,23 @@
                                         <% if (products[i].quantity === 0) { %> 
                                             <div class="out-of-stock-overlay">Out of Stock</div>
                                         <% } %>
+                
+                                        <div class="product-action-vertical">
+                                            <button class="btn-product-icon btn-wishlist btn-expandable" data-id="<%= products[i]._id %>" onclick="toggleWishlist('<%= products[i]._id %>', event)">
+                                                <span id="wishlist-button-<%= products[i]._id %>">
+                                                    <% if (products[i].isInWishlist) { %>
+                                                        Remove from Wishlist
+                                                    <% } else { %>
+                                                        Add to Wishlist
+                                                    <% } %>
+                                                </span>
+                                            </button>                                            
+                                        </div><!-- End .product-action -->
+                
+                                        <div class="product-action product-action-dark">
+                                            <a href="#" class="btn-product btn-cart" title="Add to cart"><span>add to cart</span></a>
+                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
+                                        </div><!-- End .product-action -->
                                     </figure>
                 
                                     <div class="product-body">
@@ -332,6 +349,80 @@
                         <% } %>
                     </div>
                 </div>
+                
+                <!-- Include SweetAlert -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                
+                <script>
+                    async function toggleWishlist(productId, event) {
+                        event.preventDefault();
+                        try {
+                            const response = await fetch('/toggleWishlist', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ productId }),
+                            });
+                
+                            const res = await response.json();
+                            const wishlistButton = document.querySelector(`[data-id='${productId}'] span`);
+                
+                            if (res.notLogin) {
+                                const loginButton = document.querySelector('.login-button');
+                                if (loginButton) {
+                                    const clickEvent = new MouseEvent('click', {
+                                        bubbles: true,
+                                        cancelable: true,
+                                        view: window
+                                    });
+                                    loginButton.dispatchEvent(clickEvent);
+                                } else {
+                                    console.error('Login button not found');
+                                }
+                            } else if (res.addedToWishlist) {
+                                Swal.fire({
+                                    position: "bottom-end",
+                                    title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Added To Wishlist",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    customClass: {
+                                        title: 'swal-title-size',
+                                        popup: 'swal-bg-color',
+                                    },
+                                    html: true,
+                                    backdrop: false
+                                });
+                                wishlistButton.innerText = 'Remove from Wishlist'; // Update button text
+                            } else if (res.removedFromWishlist) {
+                                Swal.fire({
+                                    position: "bottom-end",
+                                    title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Removed From Wishlist",
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    customClass: {
+                                        title: 'swal-title-size',
+                                        popup: 'swal-bg-color',
+                                    },
+                                    html: true,
+                                    backdrop: false
+                                });
+                                wishlistButton.innerText = 'Add to Wishlist'; // Update button text
+                            } else {
+                                Swal.fire({
+                                    position: "bottom-end",
+                                    title: "Item Not Added To Wishlist",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error toggling wishlist:', error);
+                        }
+                    }
+                </script>                
+                
+                
                 
 
             <div class="mb-7 mb-lg-11"></div><!-- End .mb-7 -->
@@ -784,6 +875,7 @@
             </div>
         </div>
     </div>
+   
     <script>
         function signUp()
         {

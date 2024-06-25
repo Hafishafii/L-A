@@ -298,16 +298,19 @@ const loadHome = async (req, res) => {
       req.session.user_id = null;
     }
 
+    console.log(products); 
+
     res.render("home", {
       categories: categories,
       products: products,
       userData: userData,
     });
   } catch (error) {
-    res.redirect('/error')
-    
+    console.error(error);
+    res.redirect('/error');
   }
 };
+
 
 
 
@@ -333,7 +336,6 @@ const error = async (req, res) => {
 
 
 
-
 const productView = async (req, res) => {
   try {
     const product_id = req.query.productid;
@@ -341,7 +343,12 @@ const productView = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const user = await User.findById(req.session.user_id);
     const userData = user ? user.name : null;
-    const isAvailable = product.quantity > 0;  
+    const isAvailable = product.quantity > 0;
+
+    let isInWishlist = false;
+    if (user) {
+      isInWishlist = user.wishlist.some(item => item.productId.toString() === product_id.toString());
+    }
 
     console.log(product);
     res.render("product", {
@@ -349,13 +356,15 @@ const productView = async (req, res) => {
       product: product,
       userData: userData,
       productId: product_id,
-      isAvailable: isAvailable  
+      isAvailable: isAvailable,
+      isInWishlist: isInWishlist  
     });
   } catch (error) {
     console.error('Error loading product:', error);
     res.redirect('/error');
   }
 };
+
 
 
 

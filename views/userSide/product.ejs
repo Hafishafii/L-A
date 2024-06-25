@@ -264,32 +264,29 @@
                         <!-- End .details-filter-row -->
 
                         <div class="product-details-action">
-                          <% if (isAvailable) { %>
-                              <form action="/add-to-cart" method="post">
-                                  <input type="hidden" name="productId" value="<%= product._id %>">
-                                  <button type="submit" class="btn-product btn-cart">
-                                      <span>add to cart</span>
-                                  </button>
-                              </form>
-                          <% } else { %>
-                              <button class="btn-product btn-cart" style="background-color: #ccc; cursor: not-allowed;">
-                                  <span>Out of Stock</span>
-                              </button>
-                          <% } %>
-                      </div>
+                            <% if (isAvailable) { %>
+                                <form action="/add-to-cart" method="post">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <button type="submit" class="btn-product btn-cart">
+                                        <span>add to cart</span>
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <button class="btn-product btn-cart" style="background-color: #ccc; cursor: not-allowed;">
+                                    <span>Out of Stock</span>
+                                </button>
+                            <% } %>
+
+                            <div class="details-action-wrapper">
+                              <a href="#" class="btn-product btn-wishlist" title="Wishlist" onclick="addToWishlist('<%= product._id %>', event)">
+                                  <span id="wishlist-text-<%= product._id %>">
+                                      <%= isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>
+                                  </span>
+                              </a>
+                            </div>
+                        </div>
                       
-                      
-                      
-                          <div class="details-action-wrapper">
-                            <a
-                              href="#"
-                              class="btn-product btn-wishlist"
-                              title="Wishlist"
-                              ><span>Add to Wishlist</span></a
-                            >
-                            <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a> -->
-                          </div>
-                          <!-- End .details-action-wrapper -->
+ 
                         </div>
                         <!-- End .product-details-action -->
 
@@ -868,6 +865,63 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu-overlay"></div>
     <!-- End .mobil-menu-overlay -->
+
+    <script>
+      function addToWishlist(productId, event) {
+          event.preventDefault();
+          $.ajax({
+              method: 'POST',
+              url: '/addToWishlist',
+              data: { productId },
+              success: function(res) {
+                  if (res.notLogin) {
+                  } else if (res.addedToWishlist) {
+                      const wishlistText = document.getElementById(`wishlist-text-${productId}`);
+                      wishlistText.innerHTML = 'Remove from Wishlist';
+  
+                      Swal.fire({
+                          position: "bottom-end",
+                          title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Added To Wishlist",
+                          showConfirmButton: false,
+                          timer: 1500,
+                          customClass: {
+                              title: 'swal-title-size',
+                              popup: 'swal-bg-color', 
+                          },
+                          html: true, 
+                          backdrop: false
+                      });
+                  } else if (res.removedFromWishlist) {
+                      const wishlistText = document.getElementById(`wishlist-text-${productId}`);
+                      wishlistText.innerHTML = 'Add to Wishlist';
+  
+                      Swal.fire({
+                          position: "bottom-end",
+                          title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Removed From Wishlist",
+                          showConfirmButton: false,
+                          timer: 1500,
+                          customClass: {
+                              title: 'swal-title-size',
+                              popup: 'swal-bg-color', 
+                          },
+                          html: true, 
+                          backdrop: false
+                      });
+                  } else {
+                      Swal.fire({
+                          position: "bottom-end",
+                          title: "Item Not Added To Wishlist",
+                          showConfirmButton: false,
+                          timer: 1500
+                      });
+                  }
+              },
+              error: function(error) {
+                  console.error('Error toggling wishlist:', error);
+              }
+          });
+      }
+  </script>
 
     
     <!-- End .mobile-menu-container -->
