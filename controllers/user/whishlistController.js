@@ -11,33 +11,34 @@ const crypto = require('crypto');
 
 
 
-const addToWishlist = async(req, res) => {
+const addToWishlist = async (req, res) => {
     try {
         const productId = req.body.productId;
         if (!req.session.user_id) {
-            return res.status(200).json({ notLogin: true });
+            return res.redirect('/login');
         }
+
         const user = await User.findById(req.session.user_id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
         const existingItem = user.wishlist.find(item => item.productId.equals(productId));
         if (existingItem) {
             user.wishlist = user.wishlist.filter(item => !item.productId.equals(productId));
-        } else {
-            user.wishlist.push({ productId });
-        }
-        await user.save({ versionKey: false }); 
-        if (existingItem) {
+            await user.save({ versionKey: false });
             return res.status(200).json({ removedFromWishlist: true, wishlistSize: user.wishlist.length });
         } else {
+            user.wishlist.push({ productId });
+            await user.save({ versionKey: false });
             return res.status(200).json({ addedToWishlist: true, wishlistSize: user.wishlist.length });
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: "An error occurred" });
+        return res.redirect('/error');
     }
 };
+
 
 
 
@@ -109,7 +110,7 @@ const toggleWishlist = async (req, res) => {
     try {
         const productId = req.body.productId;
         if (!req.session.user_id) {
-            return res.status(200).json({ notLogin: true });
+            return res.redirect('/login');
         }
 
         const user = await User.findById(req.session.user_id);
@@ -129,9 +130,11 @@ const toggleWishlist = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: "An error occurred" });
+        return res.redirect('/error');
     }
 };
+
+
 
 
 

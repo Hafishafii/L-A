@@ -283,7 +283,7 @@
                                       <%= isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>
                                   </span>
                               </a>
-                            </div>
+                          </div>
                         </div>
                       
  
@@ -874,8 +874,7 @@
               url: '/addToWishlist',
               data: { productId },
               success: function(res) {
-                  if (res.notLogin) {
-                  } else if (res.addedToWishlist) {
+                  if (res.addedToWishlist) {
                       const wishlistText = document.getElementById(`wishlist-text-${productId}`);
                       wishlistText.innerHTML = 'Remove from Wishlist';
   
@@ -886,9 +885,9 @@
                           timer: 1500,
                           customClass: {
                               title: 'swal-title-size',
-                              popup: 'swal-bg-color', 
+                              popup: 'swal-bg-color',
                           },
-                          html: true, 
+                          html: true,
                           backdrop: false
                       });
                   } else if (res.removedFromWishlist) {
@@ -902,9 +901,9 @@
                           timer: 1500,
                           customClass: {
                               title: 'swal-title-size',
-                              popup: 'swal-bg-color', 
+                              popup: 'swal-bg-color',
                           },
-                          html: true, 
+                          html: true,
                           backdrop: false
                       });
                   } else {
@@ -918,10 +917,11 @@
               },
               error: function(error) {
                   console.error('Error toggling wishlist:', error);
+                  window.location.href = '/error'; 
               }
           });
       }
-  </script>
+    </script>
 
     
     <!-- End .mobile-menu-container -->

@@ -94,6 +94,7 @@ const addToCart = async (req, res) => {
 
 
 
+
 // change quantity in cart
 const changeQuantity = async (req, res) => {
     try {
@@ -221,6 +222,44 @@ const loadCheckout = async (req, res) => {
 
 
 
+const applyCoupon = async (req, res) => {
+  try {
+      const { couponName, cartTotal } = req.body;
+      const coupon = await Coupon.findOne({ couponCode: String(couponName) });
+
+      if (!coupon) {
+          return res.json({ status: false, message: "Coupon not found." });
+      }
+
+      if (parseInt(cartTotal) < parseInt(coupon.minPrice)) {
+          return res.json({ status: false, message: "Cart total is less than the minimum amount required for this coupon." });
+      }
+
+      const userId = req.session.user_id;
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.json({ status: false, message: "User not found." });
+      }
+
+      if (coupon.users.some(item => String(item.userId) === String(user._id))) {
+          return res.json({ status: false, message: "You have already used this coupon." });
+      }
+
+
+      return res.json({ status: true, coupon: coupon });
+  } catch (error) {
+      console.log("Error in apply coupon", error);
+      res.status(500).send('Internal server error');
+  }
+};
+
+
+
+
+
+
+
+
 module.exports = {
   loadCart,
   addToCart,
@@ -228,4 +267,5 @@ module.exports = {
   deleteCartItem,
   calculateTotal,
   loadCheckout,
+  applyCoupon
 };

@@ -27,6 +27,7 @@ const categoryController=require('../controllers/admin/categoryController')
 const productController=require('../controllers/admin/productController')
 const {isLogin}=require("../middleware/userAuth")
 const orderManagementController=require('../controllers/admin/orderManagementController')
+const couponController=require('../controllers/admin/couponConrtoller')
 
 // multer category
 const categoryStorage=multer.diskStorage({
@@ -93,6 +94,12 @@ admin_route.post('/continue-order', orderManagementController.continueOrder)
 admin_route.get('/orders',auth.errorHandler,orderManagementController.loadOrders)
 admin_route.post('/cancelorder',orderManagementController.cancelOrder)
 admin_route.post('/change-order-status', orderManagementController.changeStatus)
+
+
+admin_route.get("/couponManagementPage",couponController.couponManagementPage);
+admin_route.post("/addCoupon", couponController.addCoupon);
+admin_route.post("/softDeleteCoupon", couponController.softDeleteCoupon);
+admin_route.post("/updateCoupon", couponController.updateCoupon);
 
 
 module.exports = admin_route;

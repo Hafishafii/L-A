@@ -49,7 +49,9 @@ user_route.get('/checkout',auth.isLogIn, cartController.loadCheckout)
 user_route.get('/whishlist',auth.isLogIn,wishlistController.loadWishlist)
 user_route.post('/addToWishlist',auth.isLogIn,wishlistController.toggleWishlist);
 user_route.post('/removeFromWishlist',auth.isLogIn,wishlistController.removeFromWishlist);
-user_route.post('/toggleWishlist', wishlistController.toggleWishlist);
+user_route.post('/toggleWishlist', auth.isLogIn,wishlistController.toggleWishlist);
+
+user_route.post('/applyCoupon',cartController.applyCoupon);
 
 user_route.post('/checkout', orderController.checkout)
 user_route.get('/my-orders', auth.isLogIn, orderController.loadOrderList)

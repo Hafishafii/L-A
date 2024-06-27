@@ -298,57 +298,80 @@
                 </style>
                 <div class="container">
                     <div class="row">
-                        <% for(let i = 0; i < products.length; i++) { %>
-                            <div class="col-4">
-                                <div class="product product-2">
-                                    <figure class="product-media">
-                                        <a href="/productview?productid=<%= products[i]._id %>">
-                                            <img src="/adminassets/imgs/products/<%= products[i].image[0] %>" alt="Product image" class="<%= products[i].quantity === 0 ? 'blur-image' : '' %> product-image">
-                                        </a>
-                
-                                        <% if (products[i].quantity === 0) { %> 
-                                            <div class="out-of-stock-overlay">Out of Stock</div>
-                                        <% } %>
-                
-                                        <div class="product-action-vertical">
-                                            <button class="btn-product-icon btn-wishlist btn-expandable" data-id="<%= products[i]._id %>" onclick="toggleWishlist('<%= products[i]._id %>', event)">
-                                                <span id="wishlist-button-<%= products[i]._id %>">
-                                                    <% if (products[i].isInWishlist) { %>
-                                                        Remove from Wishlist
-                                                    <% } else { %>
-                                                        Add to Wishlist
-                                                    <% } %>
-                                                </span>
-                                            </button>                                            
-                                        </div><!-- End .product-action -->
-                
-                                        <div class="product-action product-action-dark">
-                                            <a href="#" class="btn-product btn-cart" title="Add to cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                        </div><!-- End .product-action -->
-                                    </figure>
-                
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#"><%= products[i]?.category %></a>
-                                        </div>
-                                        <h3 class="product-title"><a href="/productview?productid=<%= products[i]._id %>"><%= products[i]?.productName %></a></h3>
-                                        <div class="product-price">
-                                            <span class="new-price">$<%= products[i]?.salePrice %></span>
-                                            <span class="old-price">Was $<%= products[i]?.regularPrice %></span>
-                                        </div>
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 80%;"></div>
-                                            </div>
-                                            <span class="ratings-text">( 5 Reviews )</span>
-                                        </div>
-                                    </div>
+                      <% for(let i = 0; i < products.length; i++) { %>
+                        <div class="col-4">
+                          <div class="product product-2">
+                            <figure class="product-media">
+                              <a href="/productview?productid=<%= products[i]._id %>">
+                                <img src="/adminassets/imgs/products/<%= products[i].image[0] %>" alt="Product image" class="<%= products[i].quantity === 0 ? 'blur-image' : '' %> product-image">
+                              </a>
+                              <% if (products[i].quantity === 0) { %> 
+                                <div class="out-of-stock-overlay">Out of Stock</div>
+                              <% } %>
+                              <div class="product-action-vertical">
+                                <button class="btn-product-icon btn-wishlist btn-expandable" data-id="<%= products[i]._id %>" onclick="toggleWishlist('<%= products[i]._id %>', event)">
+                                  <span id="wishlist-button-<%= products[i]._id %>">
+                                    <% if (products[i].isInWishlist) { %>
+                                      Remove from Wishlist
+                                    <% } else { %>
+                                      Add to Wishlist
+                                    <% } %>
+                                  </span>
+                                </button>                                            
+                              </div><!-- End .product-action -->                                        
+                              <div class="product-action product-action-dark">
+                                <a href="#" class="btn-product btn-cart" title="Add to cart" onclick="addToCart('<%= products[i]._id %>', event)"><span>add to cart</span></a>
+                                <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
+                              </div><!-- End .product-action -->
+                            </figure>
+                            <div class="product-body">
+                              <div class="product-cat">
+                                <a href="#"><%= products[i]?.category %></a>
+                              </div>
+                              <h3 class="product-title"><a href="/productview?productid=<%= products[i]._id %>"><%= products[i]?.productName %></a></h3>
+                              <div class="product-price">
+                                <span class="new-price">$<%= products[i]?.salePrice %></span>
+                                <span class="old-price">Was $<%= products[i]?.regularPrice %></span>
+                              </div>
+                              <div class="ratings-container">
+                                <div class="ratings">
+                                  <div class="ratings-val" style="width: 80%;"></div>
                                 </div>
+                                <span class="ratings-text">( 5 Reviews )</span>
+                              </div>
                             </div>
-                        <% } %>
+                          </div>
+                        </div>
+                      <% } %>
                     </div>
                 </div>
+                  
+                    <script>
+                        async function addToCart(productId, event) {
+                        event.preventDefault();
+                        try {
+                            const response = await fetch('/add-to-cart', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId }),
+                            });
+                    
+                            const res = await response.json();
+                    
+                            if (res.message === 'User not found' || res.message === 'Product not found' || res.message === 'Product out of stock') {
+                            alert(res.message);
+                            } else {
+                            window.location.href = '/cart';
+                            }
+                        } catch (error) {
+                            console.error('Error adding product to cart:', error);
+                            window.location.href = '/error';
+                        }
+                        }
+                    </script>
+                  
                 
                 <!-- Include SweetAlert -->
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -368,19 +391,7 @@
                             const res = await response.json();
                             const wishlistButton = document.querySelector(`[data-id='${productId}'] span`);
                 
-                            if (res.notLogin) {
-                                const loginButton = document.querySelector('.login-button');
-                                if (loginButton) {
-                                    const clickEvent = new MouseEvent('click', {
-                                        bubbles: true,
-                                        cancelable: true,
-                                        view: window
-                                    });
-                                    loginButton.dispatchEvent(clickEvent);
-                                } else {
-                                    console.error('Login button not found');
-                                }
-                            } else if (res.addedToWishlist) {
+                            if (res.addedToWishlist) {
                                 Swal.fire({
                                     position: "bottom-end",
                                     title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Added To Wishlist",
@@ -393,7 +404,7 @@
                                     html: true,
                                     backdrop: false
                                 });
-                                wishlistButton.innerText = 'Remove from Wishlist'; // Update button text
+                                wishlistButton.innerText = 'Remove from Wishlist'; 
                             } else if (res.removedFromWishlist) {
                                 Swal.fire({
                                     position: "bottom-end",
@@ -407,7 +418,7 @@
                                     html: true,
                                     backdrop: false
                                 });
-                                wishlistButton.innerText = 'Add to Wishlist'; // Update button text
+                                wishlistButton.innerText = 'Add to Wishlist'; 
                             } else {
                                 Swal.fire({
                                     position: "bottom-end",
@@ -418,9 +429,10 @@
                             }
                         } catch (error) {
                             console.error('Error toggling wishlist:', error);
+                            window.location.href = '/login'; 
                         }
                     }
-                </script>                
+                </script>                            
                 
                 
                 
