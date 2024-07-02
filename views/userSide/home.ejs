@@ -308,17 +308,17 @@
                               <% if (products[i].quantity === 0) { %> 
                                 <div class="out-of-stock-overlay">Out of Stock</div>
                               <% } %>
-                              <div class="product-action-vertical">
-                                <button class="btn-product-icon btn-wishlist btn-expandable" data-id="<%= products[i]._id %>" onclick="toggleWishlist('<%= products[i]._id %>', event)">
-                                  <span id="wishlist-button-<%= products[i]._id %>">
-                                    <% if (products[i].isInWishlist) { %>
-                                      Remove from Wishlist
-                                    <% } else { %>
-                                      Add to Wishlist
-                                    <% } %>
-                                  </span>
-                                </button>                                            
-                              </div><!-- End .product-action -->                                        
+                                <div class="product-action-vertical">
+                                    <button class="btn-product-icon btn-wishlist btn-expandable" data-id="<%= products[i]._id %>" onclick="toggleWishlist('<%= products[i]._id %>', event)">
+                                    <span id="wishlist-button-<%= products[i]._id %>">
+                                        <% if (products[i].isInWishlist) { %>
+                                        Remove from Wishlist
+                                        <% } else { %>
+                                        Add to Wishlist
+                                        <% } %>
+                                    </span>
+                                    </button>                                            
+                                </div><!-- End .product-action -->                                        
                               <div class="product-action product-action-dark">
                                 <a href="#" class="btn-product btn-cart" title="Add to cart" onclick="addToCart('<%= products[i]._id %>', event)"><span>add to cart</span></a>
                                 <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
@@ -348,32 +348,31 @@
                   
                     <script>
                         async function addToCart(productId, event) {
-                        event.preventDefault();
-                        try {
-                            const response = await fetch('/add-to-cart', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ productId }),
-                            });
-                    
-                            const res = await response.json();
-                    
-                            if (res.message === 'User not found' || res.message === 'Product not found' || res.message === 'Product out of stock') {
-                            alert(res.message);
-                            } else {
-                            window.location.href = '/cart';
+                            event.preventDefault();
+                            try {
+                                const response = await fetch('/add-to-cart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ productId }),
+                                });
+                        
+                                const res = await response.json();
+                        
+                                if (res.message === 'User not found' || res.message === 'Product not found' || res.message === 'Product out of stock') {
+                                alert(res.message);
+                                } else {
+                                window.location.href = '/cart';
+                                }
+                            } catch (error) {
+                                console.error('Error adding product to cart:', error);
+                                window.location.href = '/error';
                             }
-                        } catch (error) {
-                            console.error('Error adding product to cart:', error);
-                            window.location.href = '/error';
-                        }
                         }
                     </script>
                   
                 
-                <!-- Include SweetAlert -->
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                 
                 <script>
@@ -381,57 +380,57 @@
                         event.preventDefault();
                         try {
                             const response = await fetch('/toggleWishlist', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ productId }),
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId }),
                             });
-                
+
                             const res = await response.json();
                             const wishlistButton = document.querySelector(`[data-id='${productId}'] span`);
-                
+
                             if (res.addedToWishlist) {
-                                Swal.fire({
-                                    position: "bottom-end",
-                                    title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Added To Wishlist",
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                    customClass: {
-                                        title: 'swal-title-size',
-                                        popup: 'swal-bg-color',
-                                    },
-                                    html: true,
-                                    backdrop: false
-                                });
-                                wishlistButton.innerText = 'Remove from Wishlist'; 
+                            Swal.fire({
+                                position: "bottom-end",
+                                title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Added To Wishlist",
+                                showConfirmButton: false,
+                                timer: 1500,
+                                customClass: {
+                                title: 'swal-title-size',
+                                popup: 'swal-bg-color',
+                                },
+                                html: true,
+                                backdrop: false
+                            });
+                            wishlistButton.innerText = 'Remove from Wishlist';
                             } else if (res.removedFromWishlist) {
-                                Swal.fire({
-                                    position: "bottom-end",
-                                    title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Removed From Wishlist",
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                    customClass: {
-                                        title: 'swal-title-size',
-                                        popup: 'swal-bg-color',
-                                    },
-                                    html: true,
-                                    backdrop: false
-                                });
-                                wishlistButton.innerText = 'Add to Wishlist'; 
+                            Swal.fire({
+                                position: "bottom-end",
+                                title: "<i class='fa-solid fa-thumbs-up'>&nbsp</i> Item Removed From Wishlist",
+                                showConfirmButton: false,
+                                timer: 1500,
+                                customClass: {
+                                title: 'swal-title-size',
+                                popup: 'swal-bg-color',
+                                },
+                                html: true,
+                                backdrop: false
+                            });
+                            wishlistButton.innerText = 'Add to Wishlist';
                             } else {
-                                Swal.fire({
-                                    position: "bottom-end",
-                                    title: "Item Not Added To Wishlist",
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
+                            Swal.fire({
+                                position: "bottom-end",
+                                title: "Item Not Added To Wishlist",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
                             }
                         } catch (error) {
                             console.error('Error toggling wishlist:', error);
-                            window.location.href = '/login'; 
+                            window.location.href = '/login';
                         }
-                    }
+                        }
                 </script>                            
                 
                 

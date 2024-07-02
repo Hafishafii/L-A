@@ -290,19 +290,29 @@ const loadHome = async (req, res) => {
     const products = await Product.find({ isListed: true });
 
     let userData = null;
+    let wishlistProductIds = [];
+
     const user = await User.findById(req.session.user_id);
 
     if (user && user.isActive) {
       userData = user.name;
+      wishlistProductIds = user.wishlist.map(item => item.productId.toString());
     } else {
       req.session.user_id = null;
     }
 
-    console.log(products); 
+    const productsWithWishlistStatus = products.map(product => {
+      return {
+        ...product._doc,
+        isInWishlist: wishlistProductIds.includes(product._id.toString())
+      };
+    });
+
+    console.log(productsWithWishlistStatus);
 
     res.render("home", {
       categories: categories,
-      products: products,
+      products: productsWithWishlistStatus,
       userData: userData,
     });
   } catch (error) {
@@ -310,6 +320,7 @@ const loadHome = async (req, res) => {
     res.redirect('/error');
   }
 };
+
 
 
 

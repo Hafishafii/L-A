@@ -24,24 +24,27 @@ const couponManagementPage = async(req,res)=>{
 
 
 
-const addCoupon = async(req,res)=>{
-    try{
-        const { couponcode ,expirydate ,coupon_discount, minprice, maxdiscount } = req.body;
+const addCoupon = async (req, res) => {
+    try {
+        console.log(req.body,"coupon codfgdfgwdfwqe");
+        const { couponcode, expirydate, coupon_discount, minprice, maxdiscount } = req.body;
+
         let coupon = new Coupon({
-            couponCode : couponcode,
-            expiry : expirydate,
-            discount : coupon_discount,
-            maxDiscount : maxdiscount,
-            minPrice : minprice,
+            couponCode: couponcode,
+            expiry: expirydate,
+            discount: coupon_discount,
+            maxDiscount: maxdiscount,
+            minPrice: minprice,
         });
-        
+
         await coupon.save();
         res.redirect('/admin/couponManagementPage');
-    }catch(error){ 
+    } catch (error) { 
         console.log(error);
         res.status(500).send('Internal server error');
     }
-}
+};
+
 
 
 

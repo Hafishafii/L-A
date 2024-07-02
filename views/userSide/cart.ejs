@@ -12,11 +12,11 @@
     <meta name="author" content="p-themes" />
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icons/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/laptopLogo.jpg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/laptopLogo.jpg" />
     <link rel="manifest" href="/assets/images/icons/site.html" />
     <link rel="mask-icon" href="/assets/images/icons/safari-pinned-tab.svg" color="#666666" />
-    <link rel="shortcut icon" href="/assets/images/icons/favicon.ico" />
+    <link rel="shortcut icon" href="assets/images/laptopLogo.jpg" />
     <meta name="apple-mobile-web-app-title" content="Molla" />
     <meta name="application-name" content="Molla" />
     <meta name="msapplication-TileColor" content="#cc9966" />
@@ -166,6 +166,63 @@
                                         </table>
                                         <% } %>
                             </div>
+
+                            <div class="cart-discount">
+                                <form id="couponForm">
+                                  <div class="form-group">
+                                    <label for="couponcode">Select Coupon:</label>
+                                    <select class="form-control" name="couponcode" required>
+                                      <option value="">Select Coupon</option>
+                                      <% if (coupons && coupons.length > 0) { %>
+                                        <% coupons.forEach(function(couponItem) { %>
+                                          <option value="<%= couponItem.couponCode %>">
+                                            <%= couponItem.couponCode %> - Discount: ₹<%= couponItem.discount %>
+                                          </option>
+                                        <% }) %>
+                                      <% } else { %>
+                                        <option value="" disabled>No Coupons Available</option>
+                                      <% } %>
+                                    </select>
+                                  </div>
+                                  <button class="btn btn-outline-primary-2 w-100 mt-2" type="submit">
+                                    Apply <i class="icon-long-arrow-right"></i>
+                                  </button>
+                                </form>
+                              </div>                              
+                            <style>
+                                .cart-discount {
+                                    margin-top: 1rem;
+                                }
+                            
+                                .form-control {
+                                    border-color: black !important;
+                                }
+                            
+                                .form-control:focus {
+                                    border-color: black !important;
+                                    box-shadow: none !important;
+                                }
+                            
+                                .btn-outline-primary-2 {
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    border-color: black !important;
+                                    color: black !important;
+                                }
+                            
+                                .btn-outline-primary-2:hover {
+                                    background-color: black !important;
+                                    color: white !important;
+                                }
+                            
+                                .btn-outline-primary-2 i {
+                                    margin-left: 0.5rem;
+                                }
+                            </style>
+                            
+                                                      
+                            
                             <div class="cart-action text-end">
                                 <a class="btn btn-outline-dark-2 btn-block mb-3" href="/"><i
                                         class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
@@ -174,40 +231,37 @@
 
                         <aside class="col-lg-3">
                             <div class="summary summary-cart">
-                                <h3 class="summary-title">Cart Total</h3>
-                                <table class="table">
-                                    <tbody>
-                                        <tr>
-                                            <td class="cart_total_label">Cart Subtotal</td>
-                                            <td class="cart_total_amount">₹<span id="grandTotal"
-                                                    class="font-lg fw-900 text-brand">
-                                                    <%= grandTotal %>
-                                                </span></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="cart_total_label">Shipping</td>
-                                            <td class="cart_total_amount"><i class="ti-gift mr-5"></i> Free Shipping
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="cart_total_label">Total</td>
-                                            <td class="cart_total_amount">
-                                                <strong><span id="total" class="font-xl fw-900 text-brand"
-                                                        style="color: rgb(199, 161, 11);">₹ <%= grandTotal %>
-                                                            </span></strong>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <% if (userCart.cart.length) { %>
-                                    <a href="/checkout" class="btn btn-outline-dark-2 btn-block mb-3"
-                                        style="font-size: medium; background-color: rgb(168, 173, 171);">Proceed To
-                                        CheckOut</a>
-                                    <% } else { %>
-                                        <a type="button" onclick="cartEmpty()"
-                                            class="btn btn-outline-primary-2 btn-order btn-block">Proceed To
-                                            CheckOut</a>
-                                        <% } %>
+                              <h3 class="summary-title">Cart Total</h3>
+                              <table class="table">
+                                <tbody>
+                                  <tr>
+                                    <td class="cart_total_label">Cart Subtotal</td>
+                                    <td class="cart_total_amount">₹<span id="grandTotal" class="font-lg fw-900 text-brand"><%= grandTotal %></span></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="cart_total_label">Shipping</td>
+                                    <td class="cart_total_amount"><i class="ti-gift mr-5"></i> Free Shipping</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="cart_total_label">Total</td>
+                                    <td class="cart_total_amount">
+                                      <strong><span id="total" class="font-xl fw-900 text-brand" style="color: rgb(199, 161, 11);">₹ <%= grandTotal %></span></strong>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <div class="row">
+                                <div class="col my-0" style="padding-left:0;"><span style="font-size: 15px;">Coupon Discount : </span></div>
+                                <div class="d-flex text-right my-0">
+                                  <span class="my-0">&#8377; &nbsp;</span>
+                                  <p class="my-0 text-dark" id="coupondiscount"></p>
+                                </div>
+                              </div>
+                              <% if (userCart.cart.length) { %>
+                                <a href="/checkout" class="btn btn-outline-dark-2 btn-block mb-3" style="font-size: medium; background-color: rgb(168, 173, 171);">Proceed To CheckOut</a>
+                              <% } else { %>
+                                <a type="button" onclick="cartEmpty()" class="btn btn-outline-primary-2 btn-order btn-block">Proceed To CheckOut</a>
+                              <% } %>
                             </div>
                         </aside>
                     </div>
@@ -457,6 +511,36 @@
     </script>
 
     <script>
+        document.getElementById('couponForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+    
+        const couponcode = document.querySelector('select[name="couponcode"]').value;
+        const grandTotal = parseInt(document.getElementById('grandTotal').innerText);
+    
+        try {
+            const response = await fetch('/applyCoupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ couponName: couponcode, cartTotal: grandTotal })
+            });
+    
+            const result = await response.json();
+            if (result.status) {
+            document.getElementById('coupondiscount').innerText = result.discount;
+            document.getElementById('total').innerText = `₹ ${result.newTotal}`;
+            document.getElementById('grandTotal').innerText = result.newTotal;
+            } else {
+            alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+        }
+        });
+    </script>
+
+    <script>
         function changeQuantity(
             productId,
             count,
@@ -483,7 +567,7 @@
 
             if (parseInt(quantityValue) + count > parseInt(stock)) {
                 if (count === 1) {
-                    Swal.fire("Alert", "Insufficient Stock", "error");
+                    Swal.fire("No more  Quantity Available in Stock","Alert","error");
                     return;
                 }
             }

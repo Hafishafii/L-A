@@ -96,7 +96,7 @@ admin_route.post('/cancelorder',orderManagementController.cancelOrder)
 admin_route.post('/change-order-status', orderManagementController.changeStatus)
 
 
-admin_route.get("/couponManagementPage",couponController.couponManagementPage);
+admin_route.get("/couponManagementPage",auth.isLogin,couponController.couponManagementPage);
 admin_route.post("/addCoupon", couponController.addCoupon);
 admin_route.post("/softDeleteCoupon", couponController.softDeleteCoupon);
 admin_route.post("/updateCoupon", couponController.updateCoupon);

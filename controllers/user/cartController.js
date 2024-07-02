@@ -2,6 +2,7 @@ const User = require("../../model/userModel");
 const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Order = require("../../model/orderModel");
+const Coupon = require('../../model/couponModel');
 
 
 
@@ -17,6 +18,7 @@ const loadCart = async (req, res) => {
       "cart.productId"
     );
     const categories = await Category.find();
+    const coupons = await Coupon.find(); 
 
     let grandTotal = 0;
     for (let i = 0; i < userCart.cart.length; i++) {
@@ -25,17 +27,20 @@ const loadCart = async (req, res) => {
         parseInt(userCart.cart[i].productId.salePrice) *
           parseInt(userCart.cart[i].quantity);
     }
+
     res.render("cart", {
       userCart: userCart,
       grandTotal: grandTotal,
       userData: userData,
       categories: categories,
+      coupons: coupons 
     });
   } catch (error) {
-    res.redirect('/error')
-    
+    console.log("Error loading cart:", error);
+    res.redirect('/error');
   }
 };
+
 
 
 
@@ -224,34 +229,37 @@ const loadCheckout = async (req, res) => {
 
 const applyCoupon = async (req, res) => {
   try {
-      const { couponName, cartTotal } = req.body;
-      const coupon = await Coupon.findOne({ couponCode: String(couponName) });
+    const { couponName, cartTotal } = req.body;
+    const coupon = await Coupon.findOne({ couponCode: String(couponName) });
 
-      if (!coupon) {
-          return res.json({ status: false, message: "Coupon not found." });
-      }
+    if (!coupon) {
+      return res.json({ status: false, message: "Coupon not found." });
+    }
 
-      if (parseInt(cartTotal) < parseInt(coupon.minPrice)) {
-          return res.json({ status: false, message: "Cart total is less than the minimum amount required for this coupon." });
-      }
+    if (parseInt(cartTotal) < parseInt(coupon.minPrice)) {
+      return res.json({ status: false, message: "Cart total is less than the minimum amount required for this coupon." });
+    }
 
-      const userId = req.session.user_id;
-      const user = await User.findById(userId);
-      if (!user) {
-          return res.json({ status: false, message: "User not found." });
-      }
+    const userId = req.session.user_id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.json({ status: false, message: "User not found." });
+    }
 
-      if (coupon.users.some(item => String(item.userId) === String(user._id))) {
-          return res.json({ status: false, message: "You have already used this coupon." });
-      }
+    if (coupon.users.some(item => String(item.userId) === String(user._id))) {
+      return res.json({ status: false, message: "You have already used this coupon." });
+    }
 
+    const discountedTotal = parseInt(cartTotal) - parseInt(coupon.discount);
 
-      return res.json({ status: true, coupon: coupon });
+    return res.json({ status: true, discount: coupon.discount, newTotal: discountedTotal });
   } catch (error) {
-      console.log("Error in apply coupon", error);
-      res.status(500).send('Internal server error');
+    console.log("Error in apply coupon", error);
+    res.status(500).send('Internal server error');
   }
 };
+
+
 
 
 
