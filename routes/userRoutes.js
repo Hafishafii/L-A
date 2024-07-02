@@ -52,6 +52,7 @@ user_route.post('/removeFromWishlist',auth.isLogIn,wishlistController.removeFrom
 user_route.post('/toggleWishlist', auth.isLogIn,wishlistController.toggleWishlist);
 
 user_route.post('/applyCoupon',cartController.applyCoupon);
+user_route.post('/removeCoupon', cartController.removeCoupon);
 
 user_route.post('/checkout', orderController.checkout)
 user_route.get('/my-orders', auth.isLogIn, orderController.loadOrderList)

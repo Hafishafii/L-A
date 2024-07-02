@@ -14,18 +14,19 @@ const Coupon = require('../../model/couponModel');
 const loadCart = async (req, res) => {
   try {
     const userData = await User.findById(req.session.user_id);
-    const userCart = await User.findOne({ _id: req.session.user_id }).populate(
-      "cart.productId"
-    );
+    const userCart = await User.findOne({ _id: req.session.user_id }).populate("cart.productId");
     const categories = await Category.find();
-    const coupons = await Coupon.find(); 
+    const coupons = await Coupon.find();
 
     let grandTotal = 0;
     for (let i = 0; i < userCart.cart.length; i++) {
-      grandTotal =
-        grandTotal +
-        parseInt(userCart.cart[i].productId.salePrice) *
-          parseInt(userCart.cart[i].quantity);
+      grandTotal += parseInt(userCart.cart[i].productId.salePrice) * parseInt(userCart.cart[i].quantity);
+    }
+
+    let couponDiscount = 0;
+    if (req.session.coupon) {
+      couponDiscount = req.session.coupon.discount;
+      grandTotal -= couponDiscount;
     }
 
     res.render("cart", {
@@ -33,13 +34,15 @@ const loadCart = async (req, res) => {
       grandTotal: grandTotal,
       userData: userData,
       categories: categories,
-      coupons: coupons 
+      coupons: coupons,
+      coupon: req.session.coupon 
     });
   } catch (error) {
     console.log("Error loading cart:", error);
     res.redirect('/error');
   }
 };
+
 
 
 
@@ -252,6 +255,12 @@ const applyCoupon = async (req, res) => {
 
     const discountedTotal = parseInt(cartTotal) - parseInt(coupon.discount);
 
+    req.session.coupon = {
+      couponCode: coupon.couponCode,
+      discount: coupon.discount,
+      newTotal: discountedTotal
+    };
+
     return res.json({ status: true, discount: coupon.discount, newTotal: discountedTotal });
   } catch (error) {
     console.log("Error in apply coupon", error);
@@ -260,6 +269,20 @@ const applyCoupon = async (req, res) => {
 };
 
 
+
+
+
+
+
+const removeCoupon = async (req, res) => {
+  try {
+    req.session.coupon = null; 
+    return res.json({ status: true });
+  } catch (error) {
+    console.log("Error in remove coupon", error);
+    res.status(500).send('Internal server error');
+  }
+};
 
 
 
@@ -275,5 +298,6 @@ module.exports = {
   deleteCartItem,
   calculateTotal,
   loadCheckout,
-  applyCoupon
+  applyCoupon,
+  removeCoupon
 };
